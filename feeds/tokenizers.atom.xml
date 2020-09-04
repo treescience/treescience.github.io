@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Tree Science - Tokenizers</title><link href="https://tree.science/" rel="alternate"></link><link href="https://tree.science/feeds/tokenizers.atom.xml" rel="self"></link><id>https://tree.science/</id><updated>2020-07-16T19:20:00+03:00</updated><entry><title>Lazy Lexers</title><link href="https://tree.science/lazy-lexers.html" rel="alternate"></link><published>2020-07-16T19:20:00+03:00</published><updated>2020-07-16T19:20:00+03:00</updated><author><name>isidentical</name></author><id>tag:tree.science,2020-07-16:/lazy-lexers.html</id><summary type="html">&lt;p&gt;Lazy lexers&lt;/p&gt;</summary><content type="html">&lt;p&gt;Generators are on-premise iterators that output when asked
+for, shortly they provide the ability of lazy evaluation. One
+great example of this shiny feature is lexers. A lexer is
+a program, a function that takes raw source code as input
+and outputs certain parts of it with identifying according
+to some pre-defined categories.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;Input: &amp;#39;print(2+2)&amp;#39;
+-------------------------------------------
+1,0-1,5:            NAME           &amp;#39;print&amp;#39;
+1,5-1,6:            OP             &amp;#39;(&amp;#39;
+1,6-1,7:            NUMBER         &amp;#39;2&amp;#39;
+1,7-1,8:            OP             &amp;#39;+&amp;#39;
+1,8-1,9:            NUMBER         &amp;#39;2&amp;#39;
+1,9-1,10:           OP             &amp;#39;)&amp;#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The example above shows tokens that belong to a single-word
+(no space between any character group) source code. The lexer
+has certain rules that explain what a token looks like. It
+might be a regex, or a handwritten way of searching characters.
+The example above starts with the &lt;code&gt;p&lt;/code&gt; character, and sees it
+is a valid identifier start so continues to eat next characters
+until it reaches something that is not alphanumeric (&lt;code&gt;(&lt;/code&gt;). After
+that, it switches to the 'OP' rule, which has certain operator forms
+like &lt;code&gt;(&lt;/code&gt; or &lt;code&gt;&amp;gt;=&lt;/code&gt;. When it gets a match on that, it switches again
+to a different rule and so on...&lt;/p&gt;
+&lt;p&gt;Certain parsing methodologies requires to see all tokens before
+starting to parse, but that is not always the case. What if you
+have a very simple parser, which doesn't require to see upcoming
+tokens unless it can't parse the current state? It is where a
+lazy tokenizer comes in.&lt;/p&gt;
+&lt;p&gt;Let's imagine a simple tokenizer which only parses digits and 
+'+'/'-' operators. And there is also a syntactical verifier that
+ensures there is always an operator between 2 digits and it goes like
+that. When we input '2 + 2', it return &lt;code&gt;True&lt;/code&gt; and when we input '2 2 +',
+or '2 + + 2' it raises an error. And if we give '$ 2 + 2', then it won't
+start, there is going to be an error raised from the tokenizer side. But
+what if we input something that has multiple defects, something like this,
+'2 + + 2 + 3 $ 4'. Where it should raise an error? As I said before,
+it depends, but for a simple parser, you want to show your user
+the errors gradually so they solve them one by one. So we should
+first give them the ParsingError and then after they handled it
+we should raise the TokenizationError so they fix it too, but
+incrementally. And there is no point in keeping '3' in the memory
+when there is a problem that happens before.&lt;/p&gt;
+&lt;p&gt;Let's draft an example in Python. It is going to be very simple.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;lexer&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;source&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+  &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;source&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;split&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="nb"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Lexing new word: &lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;isdigit&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+      &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;Tokens&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DIGIT&lt;/span&gt;
+    &lt;span class="k"&gt;elif&lt;/span&gt; &lt;span class="n"&gt;word&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;+&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;-&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;}:&lt;/span&gt;
+      &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;Tokens&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;OPERATOR&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="n"&gt;LexerError&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;f&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Unknown token: &amp;#39;&lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;#39;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;We will go through the words (space splitted) and then if we encounter
+a digit or an operator, we return its type. If not, we will raise
+a &lt;code&gt;LexerError&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; producer = lexer(&amp;#39;2 + + 2 + 3 $ 4&amp;#39;)
+&amp;gt;&amp;gt;&amp;gt; next(producer)
+Lexing new word: 2
+&amp;lt;Tokens.DIGIT: 1&amp;gt;
+&amp;gt;&amp;gt;&amp;gt; next(producer)
+Lexing new word: +
+&amp;lt;Tokens.OPERATOR: 2&amp;gt;
+&amp;gt;&amp;gt;&amp;gt; next(producer)
+Lexing new word: +
+&amp;lt;Tokens.OPERATOR: 2&amp;gt;
+&amp;gt;&amp;gt;&amp;gt; next(producer)
+Lexing new word: 2
+&amp;lt;Tokens.DIGIT: 1&amp;gt;
+&amp;gt;&amp;gt;&amp;gt; next(producer)
+Lexing new word: +
+&amp;lt;Tokens.OPERATOR: 2&amp;gt;
+&amp;gt;&amp;gt;&amp;gt; next(producer)
+Lexing new word: 3
+&amp;lt;Tokens.DIGIT: 1&amp;gt;
+&amp;gt;&amp;gt;&amp;gt; next(producer)
+Lexing new word: $
+__main__.LexerError: Unknown token: $
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Let's draft about the verifier, which will use this producer;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;verifier&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;producer&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+  &lt;span class="n"&gt;expected_type&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Tokens&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DIGIT&lt;/span&gt;
+  &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;token_type&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;producer&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;token_type&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="n"&gt;expected_type&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="n"&gt;ParserError&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;Expecting &lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="n"&gt;expected_type&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s1"&gt; but got &lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="n"&gt;token_type&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+    &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;expected_type&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="n"&gt;Tokens&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DIGIT&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="n"&gt;expected_type&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Tokens&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;OPERATOR&lt;/span&gt;
+    &lt;span class="k"&gt;elif&lt;/span&gt; &lt;span class="n"&gt;expected_type&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="n"&gt;Tokens&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;OPERATOR&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="n"&gt;expected_type&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Tokens&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DIGIT&lt;/span&gt;
+    &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="n"&gt;UnexpectedStateError&lt;/span&gt;
+  &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="kc"&gt;True&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Since we have only one way to go, we can use a single state-d system.
+We have 'expected_type' which points to the next thing that we need to
+get if we want to be syntactically correct. Our starting state will be a
+'DIGIT', and then we will go through the producer and try to match the
+eaten tokens with our single state ('expected_type'). And after every
+the operation, we decide the next expected state by looking at the previous
+state. Let's give it a try:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; verify(&amp;#39;2 + 2&amp;#39;)
+Lexing new word: 2
+Lexing new word: +
+Lexing new word: 2
+True
+
+&amp;gt;&amp;gt;&amp;gt; verify(&amp;#39;2 + + 2 + 3 $&amp;#39;)
+Lexing new word: 2
+Lexing new word: +
+Lexing new word: +
+__main__.ParserError: Expecting Tokens.DIGIT but got Tokens.OPERATOR
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As you can see, it worked as we imagined. It didn't try to lex '$' sign
+because the parser failed before asking it to eat that character. It didn't
+even try to lex '3' so it early-failed and saved up some time. And if we
+try to fix this error;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; verify(&amp;#39;2 + 2 + 3 $&amp;#39;)
+Lexing new word: 2
+Lexing new word: +
+Lexing new word: 2
+Lexing new word: +
+Lexing new word: 3
+Lexing new word: $
+__main__.LexerError: Unknown token: $
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;We get the lexer error. This was it. Thanks for reading, I know this was a
+relatively short blog post but I needed to explain why token producers are
+generally expressed as generators and what are the advantages (a hint about
+the new blog post coming is bringining 'backtracking').&lt;/p&gt;</content><category term="Tokenizers"></category><category term="tokenizer"></category><category term="lexer"></category><category term="lazy evaluation"></category></entry></feed>

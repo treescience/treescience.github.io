@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="https://tree.science/theme/css/elegant.prod.9e9d5ce754.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="https://tree.science/theme/css/custom.css" media="screen">
+
+        <link rel="dns-prefetch" href="//fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+
+        <meta name="author" content="isidentical" />
+
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content="parser, backtracking, tokenizer, lazy evaluation, Parsers, " />
+
+<meta property="og:title" content="What the Backtracking??? "/>
+<meta property="og:url" content="https://tree.science/what-the-backtracking.html" />
+<meta property="og:description" content="Implementing a simple variant of Backtracking with various workarounds" />
+<meta property="og:site_name" content="Tree Science" />
+<meta property="og:article:author" content="isidentical" />
+<meta property="og:article:published_time" content="2020-08-02T20:10:00+03:00" />
+<meta name="twitter:title" content="What the Backtracking??? ">
+<meta name="twitter:description" content="Implementing a simple variant of Backtracking with various workarounds">
+
+        <title>What the Backtracking???  · Tree Science
+</title>
+        <link href="https://tree.science/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Tree Science - Full Atom Feed" />
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-171614891-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+
+    </head>
+    <body>
+        <div id="content">
+            <div class="navbar navbar-static-top">
+                <div class="navbar-inner">
+                    <div class="container-fluid">
+                        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </a>
+                        <a class="brand" href="https://tree.science/"><span class=site-name>Tree Science</span></a>
+                        <div class="nav-collapse collapse">
+                            <ul class="nav pull-right top-menu">
+                                <li >
+                                    <a href=
+                                       https://tree.science
+                                    >Home</a>
+                                </li>
+                                <li ><a href="https://tree.science/categories.html">Categories</a></li>
+                                <li ><a href="https://tree.science/tags.html">Tags</a></li>
+                                <li ><a href="https://tree.science/archives.html">Archives</a></li>
+                                <li><form class="navbar-search" action="https://tree.science/search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span1"></div>
+                    <div class="span10">
+<article itemscope>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+        <h1>
+            <a href="https://tree.science/what-the-backtracking.html">
+                What the Backtracking???
+            </a>
+        </h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+            
+            <p>Who loves restrictions? Even they might provide some kind of speed-ups or
+ensures the simplicity of algorithms. I guess the answer will be, most of the
+'reasonable' people. But I can't say that I am one of them when I want to
+get some fun so I'll go forward and try to bring backtracking to a 3rd party
+simple push-down stateful LL(1) python parser.</p>
+<blockquote>
+<p>Disclaimer: this post is written with no actual intent of production-ready
+code, just an experiment about can we do or not as a fun project.</p>
+</blockquote>
+<h2>What is 'Backtracking'?</h2>
+<p>The simplest (but definitely not to most formal) way of I guess describing this concept is doing an analogy with database transitions and rollbacks. During
+a parse operation; when encountered with multiple transitions for a single token
+and the current state is suitable for moving forward on more than one transitions
+that the input produced, every alternative path is going to be represented as a
+transaction. When starting to process an alternative, we will save the current state
+and locals (like the input position, since we are going to eat tokens to determine
+if we are on the right path or not) and then if we fail, we'll rollback to the state
+we have saved. If we succeed, we'll move on.</p>
+<h2>Multiple States from a 'Single Token'</h2>
+<p>If you have worked with a language that the identifiers have the same form as other
+language structures, there is a concept of 'keywords'. Let's imagine the 'else' keyword,
+in theory, it suits the condition of a normal identifier and it would be possible for you
+to assign it, but for state machines that need to determine routes based on the tokens,
+instead of checking out the value of every different token, they use the value of only
+identifier tokens as different states on the transition table when it is reserved as a string on the grammar.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">token_to_transition</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">reserved_strings</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">value</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">type</span>
+</code></pre></div>
+
+
+<p>But you might ask that there is still only one transition that is returned from that function even
+the input was a keyword, and that means there are no alternatives. You are right. With this
+kind of implementation, you can not use reserved strings (a.k.a keywords) on other occassions even
+where the type of token (<code>NAME</code>) suits. You can only use them at places where you specified as
+<code>'else'</code> on the raw grammar. At least without 'soft keywords'.</p>
+<h3>Soft Keywords</h3>
+<p>Uhm, another different concept that got into our lives. I initially saw this one in a commit
+to CPython and seen the first real example of it when reading the PEP 622. It is a proposal
+about bringing a 'pattern matching statement' to the Python. Since introducing a new statement
+should be handled with a keyword, they choose to use 'match' and 'case'. But reserving another
+name during a new python version will break a lot of code, a lot. It will even break the use
+cases in the stdlib (e.g: <code>re.match()</code>), of course, that authors considered that too and they
+made these 2 keywords 'soft'. The keywords act like normal keywords on the contexts and on other
+occasions they act like a usual 'NAME' token. For doing that when there is some kind of ambiguity,
+they try all alternatives and backtrack. Let's draft a <code>token_to_transition</code> function with supporting
+'soft' keywords. Now the '<code>token_to_transition</code>' function will return either a 1-element tuple or
+a 2-element tuple depending on the code-path.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">token_to_transition</span><span class="p">(</span><span class="n">parser</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">soft_keywords</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">type</span>
+    <span class="k">elif</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">reserved_strings</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
+</code></pre></div>
+
+
+<p>So, if you make 'import' a soft keyword, then when the parser is in a state that expects either
+a 'NAME' or an 'import' keyword, it will try both and see which one of the path will be successfully
+continues.</p>
+<h1>Let's Implement</h1>
+<p>So, what we first need is determining some kind of strategy about whether if we are going to
+consume all tokens beforehand and fill the memory, or not. As you might remember from my previous
+post that, it is not uncommon for parsers to take lazy lexers as their producer and taking input
+one by one as they proceed. They also don't store the results from previously produced tokens. But
+when we're going to do backtracking, we need to consume 'enough' tokens beforehand and need to also
+rollback when we fail to proceed that alternative.</p>
+<p>Since, consuming all the tokens beforehand wouldn't be as pleasant as we used to in times before
+backtracking, I plan to operate in the best way I can. And it is going to be operating as usual when
+there are no ambiguity or place to backtrack, and when there is we are going to consume as little as we
+can and as soon as we are clear, we'll go back to the old way and output one by one.</p>
+<div class="highlight"><pre><span></span><code>     def parse(self, tokens):
+         first_dfa = self._pgen_grammar.nonterminal_to_dfas[self._start_nonterminal][0]
+         self.stack = Stack([StackNode(first_dfa)])
+<span class="gi">+        self._tokens = _TokenGeneratorProxy(tokens)</span>
+
+<span class="gd">-        for token in tokens:</span>
+<span class="gi">+        for token in self._tokens:</span>
+             self._add_token(token)
+</code></pre></div>
+
+
+<p>Let's try to draft a <code>_TokenGeneratorProxy</code> class;</p>
+<div class="highlight"><pre><span></span><code> <span class="k">class</span> <span class="nc">_TokenGeneratorProxy</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generator</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tokens</span> <span class="o">=</span> <span class="n">generator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tokens</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">token</span>
+</code></pre></div>
+
+
+<p>We just implemented an iterator protocol with <code>__iter__</code> (which returns the iterator)
+and the <code>__next__</code> (the function that is called on every iteration). For now, we're just
+keeping a counter and returning the value we get from the original producer. But what we
+need is a way of looking ahead without breaking the whole mechanism. What I have in mind
+is something like this;</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">eat_and_print_next_token</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokens</span><span class="o">.</span><span class="n">release</span><span class="p">()</span> <span class="k">as</span> <span class="n">proxy</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">needed</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+            <span class="n">proxy</span><span class="o">.</span><span class="n">eat</span><span class="p">(</span><span class="n">needed</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;end of for loop&#39;</span><span class="p">)</span>
+        <span class="n">proxy</span><span class="o">.</span><span class="n">eat</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">eat_and_print_next_token</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">eat_and_print_next_token</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">eat_and_print_next_token</span><span class="p">()</span>
+</code></pre></div>
+
+
+<p>Which in theory should work like this;</p>
+<div class="highlight"><pre><span></span><code>eating &#39;NAME&#39; as the position &#39;0&#39;
+
+releasing the producer
+
+eating &#39;OPERATOR&#39; as the position &#39;0&#39;
+eating &#39;NAME&#39; as the position &#39;1&#39;
+
+end of for loop
+
+using cached token &#39;OPERATOR&#39; from the position &#39;0&#39;
+
+locking the producer
+
+using cached token &#39;OPERATOR&#39; from the position &#39;1&#39;
+using cached token &#39;NAME&#39; from the position &#39;2&#39;
+eating &#39;NEWLINE&#39; as the position &#39;3&#39;
+</code></pre></div>
+
+
+<p>It might look a little bit complex, but if I have to explain I would say
+that, without any 'release' operation, the proxy is going to just consume
+from the producer and output without storing any kind of token. When there
+is a release action, it will lock a point (the counter), and record all
+the tokens that it will consume until it is locked again (exit of the
+context manager). When locked, the <code>proxy.eat</code> will eat in a relative
+range, so if you have eaten 1 token before (index 0) the lock operation, and
+try to perform <code>proxy.eat(0)</code>, it will eat the token in the position of index 1.
+Also, when you performed <code>proxy.eat(0)</code> after a <code>proxy.eat(0)</code> it will return
+the same thing (if performed with-in the same point). Also, it doesn't matter
+how far you have eaten in a lock, it will be reset to the point of the lock
+after the re-locking operation and for the ones you have already consumed, they
+will come up from the cache.</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@contextmanager</span>
+<span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_release_ranges</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_counter</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">[]])</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="bp">self</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="c1"># Lock the last release range to the final position that</span>
+        <span class="c1"># has been eaten.</span>
+        <span class="n">total_eaten</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_release_ranges</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_release_ranges</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">+</span> <span class="n">total_eaten</span>
+</code></pre></div>
+
+
+<p>The <code>_release_ranges</code> is a list of 3-item length records. The first one points
+the state that we started eating tokens, the second one points the end (which
+is set after the re-locking operation), and the third one is another list that
+consists from the tokens that are eaten on that range.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">eat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">):</span>
+    <span class="n">eaten_tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_release_ranges</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">point</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">eaten_tokens</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">eaten_tokens</span><span class="p">[</span><span class="n">point</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">while</span> <span class="n">point</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">eaten_tokens</span><span class="p">):</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tokens</span><span class="p">)</span>
+            <span class="n">eaten_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">token</span>
+</code></pre></div>
+
+
+<p>The <code>eaten_tokens</code> (the last element of the record) is going to be ordered list
+so the index will point to the actual token that lays in <code>self._counter + point</code>.
+It will also work if you try to jump.</p>
+<div class="highlight"><pre><span></span><code> <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># If the current position is already compromised (looked up)</span>
+    <span class="c1"># return the eaten token, if not just go further on the given</span>
+    <span class="c1"># token producer.</span>
+    <span class="k">for</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">tokens</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_release_ranges</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">end</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">start</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">&lt;</span> <span class="n">end</span><span class="p">:</span>
+            <span class="n">token</span> <span class="o">=</span> <span class="n">tokens</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">-</span> <span class="n">start</span><span class="p">]</span>
+            <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tokens</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">token</span>
+</code></pre></div>
+
+
+<p>And finally, we need an extra for loop to go through all release records
+and try to match the current point and if found, just use it. If not, we'll
+allocate a new token.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">can_advance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">to</span><span class="p">):</span>
+    <span class="c1"># Try to eat, fail if it can&#39;t. The eat operation is cached</span>
+    <span class="c1"># so there wont be any additional cost of eating here</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eat</span><span class="p">(</span><span class="n">to</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+</code></pre></div>
+
+
+<p>Since we already caching the results of <code>eat</code>, it is going to be much
+easier to implement a <code>can_advance</code> functionality which will just try
+to go to the selected pointed, if the producer can produce no more, it
+will just return <code>False</code>. Otherwise will result with a <code>True</code>.</p>
+<h3>Final Quest: Implementing the real backtracking</h3>
+<p>Since we already created the way of eating / caching tokens from a lazy
+producer, we can safely go forward and modify the parser. As a short summary
+of the mechanism;</p>
+<div class="highlight"><pre><span></span><code>&gt; parse
+    for token in tokens:
+        add_token(token)
+&gt; add_token
+    transition = token_to_transition(token)
+    while True:
+        try:
+            plan = stack[-1].dfa.transitions[transition]
+            break
+        except KeyError:
+            if stack[-1].dfa.is_final:
+                self._pop()
+            else:
+                self.error_recovery(token)
+                return
+    stack[-1].dfa = plan.next_dfa
+</code></pre></div>
+
+
+<p>As you might be seen, it basically converts the input to a transition
+then finds the next state by checking out the transition table of the
+last state. When it founds the next transition, it sets it and continues.</p>
+<p>Let's continue step by step. The first thing is that, we changed the
+<code>token_to_transition</code> function to output multiple transitions, so we
+need to change there to. </p>
+<div class="highlight"><pre><span></span><code><span class="gd">-        transition = _token_to_transition(grammar, type_, value)</span>
+<span class="gi">+        possible_transitions = _token_to_transition(grammar, type_, value)</span>
+</code></pre></div>
+
+
+<p>Also, it is going be too much for us to fit the functionality of finding the
+next state into a <code>try/except</code>, so we're just going to split out too.</p>
+<div class="highlight"><pre><span></span><code><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">plan</span> <span class="o">=</span> <span class="n">get_possible_plan</span><span class="p">(</span><span class="n">possible_transitions</span><span class="p">,</span> <span class="n">stack</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">dfa</span><span class="o">.</span><span class="n">transitions</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">plan</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span>
+        <span class="k">break</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="o">...</span> <span class="c1"># pop / error_recovery</span>
+</code></pre></div>
+
+
+<p>The <code>get_possible_plan</code> is going to return <code>None</code>, only if there is nowhere to proceed
+with the given transition. For just preserving the old habit of raising <code>KeyError</code>, we're
+just going to raise that <code>KeyError</code> (which was used to raised from accessing the transition
+table).</p>
+<p>Let's move forward with our precious <code>get_possible_plan</code> function which will eventually
+have some kind of backtracking.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">get_possible_plan</span><span class="p">(</span><span class="n">possible_transitions</span><span class="p">,</span> <span class="n">transition_table</span><span class="p">):</span>
+    <span class="n">possible_plans</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">transition</span> <span class="ow">in</span> <span class="n">possible_transitions</span><span class="p">:</span>
+        <span class="n">possible_plan</span> <span class="o">=</span> <span class="n">transition_table</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">transition</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">possible_plan</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">possible_plans</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">possible_plan</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>The function will get the <code>possible_transitions</code>, and a <code>transition_table</code> to check
+them against. It will create a temporary list that is going to contain all possible
+routes with given states. Then we'll go through all the states and try to find a place
+for them in the transition table.</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">possible_plans</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">return</span> <span class="kc">None</span>
+<span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">possible_plans</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">possible_plans</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</code></pre></div>
+
+
+<p>If there is nothing inside of <code>possible_plans</code>, we're just going to return <code>None</code> (which
+as I mentioned before, is going to equal of "we are done here"). If there is only one possible
+route, it is so nice, we can just return it and exit without any trouble. But, what if there
+are more then one possible plan with the current transitions. It is where, backtracking comes
+in.</p>
+<div class="highlight"><pre><span></span><code><span class="n">dead_plans</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+<span class="n">possible_plan_table</span> <span class="o">=</span> <span class="p">{</span><span class="n">possible_plan</span><span class="p">:</span> <span class="p">[</span><span class="n">possible_plan</span><span class="p">]</span> <span class="k">for</span> <span class="n">possible_plan</span> <span class="ow">in</span> <span class="n">possible_plans</span><span class="p">}</span>
+</code></pre></div>
+
+
+<p>We are going to keep 2 different tables. One is going to be a set of <code>dead_plans</code>, and the other one is going
+to be a mapping of the possible routes and how far they can proceed. Like if we have 2 possible routes and one
+can eat 3 token more and then fail, and if the other one can eat 4 and fail, we'll go for the latter. </p>
+<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokens</span><span class="o">.</span><span class="n">release</span><span class="p">()</span> <span class="k">as</span> <span class="n">token_proxy</span><span class="p">:</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_superior_plan</span><span class="p">(</span><span class="n">possible_plan_table</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">token_proxy</span><span class="o">.</span><span class="n">can_advance</span><span class="p">(</span><span class="n">counter</span><span class="p">):</span>
+            <span class="k">break</span> <span class="c1"># nothing to do, get the best plan we have</span>
+        <span class="n">token</span> <span class="o">=</span> <span class="n">token_proxy</span><span class="o">.</span><span class="n">eat</span><span class="p">(</span><span class="n">counter</span><span class="p">)</span>
+        <span class="n">next_transitions</span> <span class="o">=</span> <span class="n">_token_to_transition</span><span class="p">(</span><span class="n">grammar</span><span class="p">,</span> <span class="o">*</span><span class="n">token</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+</code></pre></div>
+
+
+<p>So we are always going to check out if there are any superior plans with <code>self._superior_plan</code>, and if we found
+that all plans except one is dead, we're just going to choose the one and stop consuming the token proxy and
+re-lock the current state. If we can't go further, we are just going to stop and return the first plan (which
+I don't expect will happen ever).</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">origin</span><span class="p">,</span> <span class="n">possible_plans</span> <span class="ow">in</span> <span class="n">possible_plan_table</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">current_plan</span> <span class="o">=</span> <span class="n">possible_plans</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">origin</span> <span class="ow">in</span> <span class="n">dead_plans</span><span class="p">:</span>
+        <span class="k">continue</span>
+
+    <span class="k">for</span> <span class="n">dfa_push</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">current_plan</span><span class="o">.</span><span class="n">dfa_pushes</span><span class="p">):</span>
+        <span class="n">next_possible_plan</span> <span class="o">=</span> <span class="n">get_possible_plan</span><span class="p">(</span><span class="n">next_transitions</span><span class="p">,</span> <span class="n">dfa_push</span><span class="o">.</span><span class="n">transitions</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">next_possible_plan</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dead_plans</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">origin</span><span class="p">)</span>
+        <span class="k">continue</span>
+    <span class="n">possible_plans</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_possible_plan</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>Here it comes the real backtracking. We are moving on all possible plans, and finding the current state
+which holds the transition table (<code>current_plan</code>). After that, we check if this plan is a dead-end or no.
+If it is, we are just going to pass the backtracking step and continue on the next plan.</p>
+<p>The for loop below that part is iterating over all the dfa pushes, which is actually the rules that it
+has entered. If we wanted to see what happens when we get <code>import</code> of the <code>import x</code>, the pushes are
+things like these;</p>
+<div class="highlight"><pre><span></span><code>[
+    &lt;DFAState: stmt is_final=True&gt;,
+    &lt;DFAState: simple_stmt is_final=False&gt;,
+    &lt;DFAState: small_stmt is_final=True&gt;,
+    &lt;DFAState: import_stmt is_final=True&gt;,
+    &lt;DFAState: import_name is_final=False&gt;
+]
+</code></pre></div>
+
+
+<p>The reason we iterate a reversed version of it is finding a place where we can proceed. When we got a push
+that actually produces results with our current strategy, we choose to go with it and exit from the loop.
+If we can't find anything that actually works, we are just going to add this plan's root to the <code>dead_plans</code>
+set and won't ever try to progress on it.</p>
+<p>And finally, if we found either a supeior plan or consumed all the input (which I expect not to happen, unless
+some kind of invalid input) we're just going to exit with the supeior plan;</p>
+<div class="highlight"><pre><span></span><code><span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_superior_plan</span><span class="p">(</span><span class="n">possible_plan_table</span><span class="p">,</span> <span class="n">winner</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+
+
+<p>This was it, I really enjoyed when I was developing this since it sounded like a really funny thing to experiment with in the
+beginning. By the way if you have similar thoughts or new ideas about this subject, just let me know at <a href="https://twitter.com/isidentical">twitter/@isidentical</a>,
+I really would like to hear from you.</p>
+
+
+             
+ 
+                <p id="post-share-links">
+    Share on:
+      <a href="https://twitter.com/intent/tweet?text=What%20the%20Backtracking%3F%3F%3F&url=https%3A//tree.science/what-the-backtracking.html&hashtags=parser,backtracking,tokenizer,lazy-evaluation" target="_blank" rel="nofollow noopener noreferrer" title="Share on Twitter">Twitter</a>
+ ❄       <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//tree.science/what-the-backtracking.html" target="_blank" rel="nofollow noopener noreferrer" title="Share on Facebook">Facebook</a>
+ ❄       <a href="mailto:?subject=What%20the%20Backtracking%3F%3F%3F&amp;body=https%3A//tree.science/what-the-backtracking.html" target="_blank" rel="nofollow noopener noreferrer" title="Share via Email">Email</a>
+
+            
+            
+
+
+
+
+
+
+
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="https://tree.science/lazy-lexers.html" title="Previous: Lazy Lexers">Lazy Lexers</a></li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section id="article-sidebar" class="span2">
+            <h4>Published</h4>
+            <time itemprop="dateCreated" datetime="2020-08-02T20:10:00+03:00">Paz 02 Ağustos 2020</time>
+            <h4>Category</h4>
+            <a class="category-link" href="https://tree.science/categories.html#parsers-ref">Parsers</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="https://tree.science/tags.html#backtracking-ref">backtracking
+                    <span class="superscript">1</span>
+</a></li>
+                <li><a href="https://tree.science/tags.html#lazy-evaluation-ref">lazy evaluation
+                    <span class="superscript">2</span>
+</a></li>
+                <li><a href="https://tree.science/tags.html#parser-ref">parser
+                    <span class="superscript">1</span>
+</a></li>
+                <li><a href="https://tree.science/tags.html#tokenizer-ref">tokenizer
+                    <span class="superscript">2</span>
+</a></li>
+            </ul>
+<h4>Contact</h4>
+<div id="sidebar-social-link">
+    <a href="https://twitter.com/isidentical" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="Twitter" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#1da1f3"/><path fill="#fff" d="M437 152a72 72 0 0 1-40 12 72 72 0 0 0 32-40 72 72 0 0 1-45 17 72 72 0 0 0-122 65 200 200 0 0 1-145-74 72 72 0 0 0 22 94 72 72 0 0 1-32-7 72 72 0 0 0 56 69 72 72 0 0 1-32 1 72 72 0 0 0 67 50 200 200 0 0 1-105 29 200 200 0 0 0 309-179 200 200 0 0 0 35-37"/></svg>
+    </a>
+    <a href="https://github.com/isidentical" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="GitHub" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#1B1817"/><path fill="#fff" d="M335 499c14 0 12 17 12 17H165s-2-17 12-17c13 0 16-6 16-12l-1-50c-71 16-86-28-86-28-12-30-28-37-28-37-24-16 1-16 1-16 26 2 40 26 40 26 22 39 59 28 74 22 2-17 9-28 16-35-57-6-116-28-116-126 0-28 10-51 26-69-3-6-11-32 3-67 0 0 21-7 70 26 42-12 86-12 128 0 49-33 70-26 70-26 14 35 6 61 3 67 16 18 26 41 26 69 0 98-60 120-117 126 10 8 18 24 18 48l-1 70c0 6 3 12 16 12z"/></svg>
+    </a>
+</div>
+            
+
+
+
+
+
+            
+
+
+
+
+
+        </section>
+</div>
+</article>
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe.
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides.
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>                    </div>
+                    <div class="span1"></div>
+                </div>
+            </div>
+        </div>
+<footer>
+    <div>
+        Content licensed under <a rel="license nofollow noopener noreferrer"
+    href="http://creativecommons.org/licenses/by/4.0/" target="_blank">
+    Creative Commons Attribution 4.0 International License</a>.
+    </div>
+
+
+
+
+    <div id="fpowered">
+        Powered by: <a href="http://getpelican.com/" title="Pelican Home Page" target="_blank" rel="nofollow noopener noreferrer">Python/Pelican</a>
+    </div>
+</footer>            <script src="//code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script src="https://tree.science/theme/js/elegant.prod.9e9d5ce754.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    <script>
+    (function () {
+        if (window.location.hash.match(/^#comment-\d+$/)) {
+            $('#comment_thread').collapse('show');
+        }
+    })();
+    window.onhashchange=function(){
+        if (window.location.hash.match(/^#comment-\d+$/))
+            window.location.reload(true);
+    }
+    $('#comment_thread').on('shown', function () {
+        var link = document.getElementById('comment-accordion-toggle');
+        var old_innerHTML = link.innerHTML;
+        $(link).fadeOut(200, function() {
+            $(this).text('Click here to hide comments').fadeIn(200);
+        });
+        $('#comment_thread').on('hidden', function () {
+            $(link).fadeOut(200, function() {
+                $(this).text(old_innerHTML).fadeIn(200);
+            });
+        })
+    })
+</script>
+
+    </body>
+    <!-- Theme: Elegant built for Pelican
+        License : MIT -->
+</html>
