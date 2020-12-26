@@ -5,8 +5,8 @@ are Guido). I'm not talking about any features in specific,
 but rather the whole language. If you compare a code fragment
 that you wrote 5 years ago, with the 'refactored' version that
 you would write if it were today the difference is obvious. &lt;/p&gt;
-&lt;p&gt;We've seen a lot of new syntax popping into our lives, in the
-just last 5 years (starting from 3.5) ::&lt;/p&gt;
+&lt;p&gt;We've seen a lot of new syntax popping into our lives, in just the
+last 5 years (starting from 3.5):&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href="https://www.python.org/dev/peps/pep-0448/"&gt;PEP 448&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -92,7 +92,7 @@ adding regex literals, and then move forward to call pipeline operator, blah bla
 to the Python-ideas, then get ready to see tons of different, redundant new syntax proposals (even I, probably
 proposed a couple of very obscure and stupid ideas in the past). Though this brings me back to the point of,
 whether we should stop the syntactical growth at all or not. &lt;/p&gt;
-&lt;p&gt;In the last 6 month, there were 3 different major syntax changes were proposed. I guess everyone is somewhat familiar
+&lt;p&gt;In the last 6 month, 3 different major syntax changes were proposed. I guess everyone is somewhat familiar
 with the pattern matching PEPs, PEP 622 (PEP 634, PEP 635, PEP 636). Also, there is PEP 637 for allowing keyword arguments
 on the subscript syntax &lt;code&gt;[x=y, z=q]&lt;/code&gt; and PEP 638, for syntactic macros. I am not going to criticize any of these PEPs, but
 I'd like to ask you to think about them. Think of how they could affect you in 5 years. Think about whether your
@@ -105,12 +105,15 @@ hundreds of emails out there related to these proposals. I won't expect anyone t
 general idea just check some of them out.&lt;/p&gt;
 &lt;p&gt;Have to say that, I'm extremely overwhelmed by seeing this amount of change proposals every day, in various
 places. No one is forcing me to read them, though it is just a burden that I am intentionally or unintentionally taking to see what are people looking for in the language that I (myself) probably will be stuck
-with for the next decade. What are they trying to achieve by making it grow so more (syntax-wise) with so little real gain besides being just another obstacle on the way. If we put a new syntax, then even though how small it is, we can not remove it (all of us saw what happened during
-2 to 3 transformation). Putting a new syntax is much more serious and complicated than putting a new functionality to the
-runtime. What I'm trying to ask is, simply ask yourself whether you actually need this or not. Whether this would
-'save' you (just like the &lt;code&gt;f-strings&lt;/code&gt;, or the PEP 572) or not. &lt;/p&gt;
-&lt;p&gt;I just threw a bunch of thoughts, in a very ~mixed mood, while listening to Ludovico Einaudi. Feel free to send me any comments
-through my email (batuhan [at] python [dot] org) or twitter (@isidentical).&lt;/p&gt;</content><category term="Languages"></category><category term="python"></category></entry><entry><title>The art of AST unparsing</title><link href="https://tree.science/the-art-of-ast-unparsing.html" rel="alternate"></link><published>2020-11-06T19:00:00+03:00</published><updated>2020-11-06T19:00:00+03:00</updated><author><name>isidentical</name></author><id>tag:tree.science,2020-11-06:/the-art-of-ast-unparsing.html</id><summary type="html">&lt;p&gt;Sorcery behind renconstruction of source code from syntax trees.&lt;/p&gt;</summary><content type="html"></content><category term="Abstract Syntax Trees"></category><category term="ast"></category><category term="unparsing"></category></entry><entry><title>What the Backtracking???</title><link href="https://tree.science/what-the-backtracking.html" rel="alternate"></link><published>2020-08-02T20:10:00+03:00</published><updated>2020-08-02T20:10:00+03:00</updated><author><name>isidentical</name></author><id>tag:tree.science,2020-08-02:/what-the-backtracking.html</id><summary type="html">&lt;p&gt;Implementing a simple variant of Backtracking with various workarounds&lt;/p&gt;</summary><content type="html">&lt;p&gt;Who loves restrictions? Even they might provide some kind of speed-ups or
+with for the next decade. Trying to comprehend what people are aiming with making language so complex with
+growing the syntax more and more every day.&lt;/p&gt;
+&lt;p&gt;Don't forget that adding syntax is much more serious than adding a functionality to the runtime. That syntax
+will be the face of the language, and you won't be able to alter it even a little bit. We all saw what happened
+when the syntax was changed in a backwards-incompatible manner, and no one wants to go through that again. This
+is why I am just asking you to think about whether do you believe these would be good fits for the language, whether
+they will worth to their imponderable cost. &lt;/p&gt;
+&lt;p&gt;This is just me, throwing a bunch of questions into the void. If you want to talk more about these, feel free to
+send me an email (batuhan [at] python [dot] org) or reach me through twitter (open DM for all, @isidentical).&lt;/p&gt;</content><category term="Languages"></category><category term="python"></category></entry><entry><title>The art of AST unparsing</title><link href="https://tree.science/the-art-of-ast-unparsing.html" rel="alternate"></link><published>2020-11-06T19:00:00+03:00</published><updated>2020-11-06T19:00:00+03:00</updated><author><name>isidentical</name></author><id>tag:tree.science,2020-11-06:/the-art-of-ast-unparsing.html</id><summary type="html">&lt;p&gt;Sorcery behind renconstruction of source code from syntax trees.&lt;/p&gt;</summary><content type="html"></content><category term="Abstract Syntax Trees"></category><category term="ast"></category><category term="unparsing"></category></entry><entry><title>What the Backtracking???</title><link href="https://tree.science/what-the-backtracking.html" rel="alternate"></link><published>2020-08-02T20:10:00+03:00</published><updated>2020-08-02T20:10:00+03:00</updated><author><name>isidentical</name></author><id>tag:tree.science,2020-08-02:/what-the-backtracking.html</id><summary type="html">&lt;p&gt;Implementing a simple variant of Backtracking with various workarounds&lt;/p&gt;</summary><content type="html">&lt;p&gt;Who loves restrictions? Even they might provide some kind of speed-ups or
 ensures the simplicity of algorithms. I guess the answer will be, most of the
 'reasonable' people. But I can't say that I am one of them when I want to
 get some fun so I'll go forward and try to bring backtracking to a 3rd party
