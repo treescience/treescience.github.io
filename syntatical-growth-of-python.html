@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="https://tree.science/theme/css/elegant.prod.9e9d5ce754.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="https://tree.science/theme/css/custom.css" media="screen">
+
+        <link rel="dns-prefetch" href="//fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+
+        <meta name="author" content="isidentical" />
+
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content="python, Languages, " />
+
+<meta property="og:title" content="Should we say stop to the syntactical growth of Python? "/>
+<meta property="og:url" content="https://tree.science/syntatical-growth-of-python.html" />
+<meta property="og:description" content="Let&#39;s talk about the syntax-wise growth of Python." />
+<meta property="og:site_name" content="Tree Science" />
+<meta property="og:article:author" content="isidentical" />
+<meta property="og:article:published_time" content="2020-12-27T02:20:00+03:00" />
+<meta name="twitter:title" content="Should we say stop to the syntactical growth of Python? ">
+<meta name="twitter:description" content="Let&#39;s talk about the syntax-wise growth of Python.">
+
+        <title>Should we say stop to the syntactical growth of Python?  · Tree Science
+</title>
+        <link href="https://tree.science/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Tree Science - Full Atom Feed" />
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-171614891-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+
+    </head>
+    <body>
+        <div id="content">
+            <div class="navbar navbar-static-top">
+                <div class="navbar-inner">
+                    <div class="container-fluid">
+                        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </a>
+                        <a class="brand" href="https://tree.science/"><span class=site-name>Tree Science</span></a>
+                        <div class="nav-collapse collapse">
+                            <ul class="nav pull-right top-menu">
+                                <li >
+                                    <a href=
+                                       https://tree.science
+                                    >Home</a>
+                                </li>
+                                <li ><a href="https://tree.science/categories.html">Categories</a></li>
+                                <li ><a href="https://tree.science/tags.html">Tags</a></li>
+                                <li ><a href="https://tree.science/archives.html">Archives</a></li>
+                                <li><form class="navbar-search" action="https://tree.science/search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span1"></div>
+                    <div class="span10">
+<article itemscope>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+        <h1>
+            <a href="https://tree.science/syntatical-growth-of-python.html">
+                Should we say stop to the syntactical growth of Python?
+            </a>
+        </h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+            
+            <p>The language has been literally 'evolving' since the version
+that many of us have begun (maybe since the initial day, if you
+are Guido). I'm not talking about any features in specific,
+but rather the whole language. If you compare a code fragment
+that you wrote 5 years ago, with the 'refactored' version that
+you would write if it were today the difference is obvious. </p>
+<p>We've seen a lot of new syntax popping into our lives, in the
+just last 5 years (starting from 3.5) ::</p>
+<ul>
+<li><a href="https://www.python.org/dev/peps/pep-0448/">PEP 448</a></li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="o">*</span><span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="mi">4</span>
+<span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="p">[</span><span class="o">*</span><span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="mi">4</span><span class="p">]</span>
+<span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="p">{</span><span class="o">*</span><span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">),</span> <span class="mi">4</span><span class="p">}</span>
+<span class="p">{</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}}</span>
+<span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+</code></pre></div>
+
+<ul>
+<li><a href="https://www.python.org/dev/peps/pep-0465/">PEP 465</a>, a.k.a matrix operator</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">S</span> <span class="o">=</span> <span class="p">(</span><span class="n">H</span> <span class="o">@</span> <span class="n">beta</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">inv</span><span class="p">(</span><span class="n">H</span> <span class="o">@</span> <span class="n">V</span> <span class="o">@</span> <span class="n">H</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">@</span> <span class="p">(</span><span class="n">H</span> <span class="o">@</span> <span class="n">beta</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span>
+</code></pre></div>
+
+<ul>
+<li><a href="https://www.python.org/dev/peps/pep-0492/">PEP 492</a>, a.k.a native async syntax</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">commit</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="o">...</span>
+
+<span class="k">async</span> <span class="k">with</span> <span class="n">session</span><span class="o">.</span><span class="n">transaction</span><span class="p">():</span>
+    <span class="o">...</span>
+    <span class="k">await</span> <span class="n">session</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="o">...</span>
+</code></pre></div>
+
+<ul>
+<li><a href="https://www.python.org/dev/peps/pep-0498/">PEP 498</a>, a.k.a f-strings</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="sa">f</span><span class="s1">&#39;The value is </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">.&#39;</span>
+<span class="s1">&#39;The value is 80.&#39;</span>
+</code></pre></div>
+
+<ul>
+<li><a href="https://www.python.org/dev/peps/pep-0526/">PEP 526</a></li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">primes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">captain</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># Note: no initial value!</span>
+
+<span class="k">class</span> <span class="nc">Starship</span><span class="p">:</span>
+    <span class="n">stats</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+</code></pre></div>
+
+<ul>
+<li><a href="https://www.python.org/dev/peps/pep-0570/">PEP 570</a>, a.k.a walrus</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="err">def add(x, y, /):</span>
+<span class="err">    return x + y</span>
+</code></pre></div>
+
+<ul>
+<li><a href="https://www.python.org/dev/peps/pep-0572/">PEP 572</a></li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="c1"># Handle a matched regex</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">match</span> <span class="o">:=</span> <span class="n">pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># Do something with match</span>
+
+<span class="c1"># A loop that can&#39;t be trivially rewritten using 2-arg iter()</span>
+<span class="k">while</span> <span class="n">chunk</span> <span class="o">:=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8192</span><span class="p">):</span>
+<span class="n">process</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+
+<span class="c1"># Reuse a value that&#39;s expensive to compute</span>
+<span class="p">[</span><span class="n">y</span> <span class="o">:=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">y</span><span class="o">**</span><span class="mi">3</span><span class="p">]</span>
+</code></pre></div>
+
+<p>This huge list contains some of the (major~) changes that have been implemented since 3.5, there
+are also quite a few minor ones (like <code>_</code> separator for numbers, <code>1_000_00</code> or <a href="https://www.python.org/dev/peps/pep-0530/">PEP 530</a>
+for async comprehensions or even a new one for 3.9 to extend the decorator syntax, <a href="https://www.python.org/dev/peps/pep-0614/">PEP 614</a>.)</p>
+<p>Well, since we all refreshed our memories, let's try to imagine a world where these features don't exist. Imagine
+not having access to f-strings, writing weird stuff to deal with your coroutines, or repeating yourself 2 times whenever
+you want to read chunks from a file, writing utility functions to merge 2 mappings and more awful cases. Except for maybe
+PEP 465 (I never needed it, probably because I don't do scientific programming. But from what I saw by looking at the examples
+in the PEP, it is quite good for people who work with data on a daily basis.) every feature in that list literally changed and
+actively affected how I write my Python code, right now.</p>
+<p>Seems like syntactical additions sounds great, why don't we add everything to the language? Let's start with
+adding regex literals, and then move forward to call pipeline operator, blah blah blah. If you are subscribed
+to the Python-ideas, then get ready to see tons of different, redundant new syntax proposals (even I, probably
+proposed a couple of very obscure and stupid ideas in the past). Though this brings me back to the point of,
+whether we should stop the syntactical growth at all or not. </p>
+<p>In the last 6 month, there were 3 different major syntax changes were proposed. I guess everyone is somewhat familiar
+with the pattern matching PEPs, PEP 622 (PEP 634, PEP 635, PEP 636). Also, there is PEP 637 for allowing keyword arguments
+on the subscript syntax <code>[x=y, z=q]</code> and PEP 638, for syntactic macros. I am not going to criticize any of these PEPs, but
+I'd like to ask you to think about them. Think of how they could affect you in 5 years. Think about whether your
+coding styles would change because of them, think about how good fit they are to the language, and most importantly think about
+whether you 'ACTUALLY' need them. Is there any 'ESSENTIAL' case that would be much better when you pass keyword arguments through
+slices instead of just making a call to some sort of <code>get()</code> function? Or can't we have syntactical customization without having an
+official definition of it? Does the syntax for 'patterns' (described by PEP 634) is a good fit for the Python language?</p>
+<p>There are a lot of blog posts, <a href="https://discuss.python.org/t/gauging-sentiment-on-pattern-matching/5770">poll</a>s and maybe
+hundreds of emails out there related to these proposals. I won't expect anyone to read them all, but if you want to get a 
+general idea just check some of them out.</p>
+<p>Have to say that, I'm extremely overwhelmed by seeing this amount of change proposals every day, in various
+places. No one is forcing me to read them, though it is just a burden that I am intentionally or unintentionally taking to see what are people looking for in the language that I (myself) probably will be stuck
+with for the next decade. What are they trying to achieve by making it grow so more (syntax-wise) with so little real gain besides being just another obstacle on the way. If we put a new syntax, then even though how small it is, we can not remove it (all of us saw what happened during
+2 to 3 transformation). Putting a new syntax is much more serious and complicated than putting a new functionality to the
+runtime. What I'm trying to ask is, simply ask yourself whether you actually need this or not. Whether this would
+'save' you (just like the <code>f-strings</code>, or the PEP 572) or not. </p>
+<p>I just threw a bunch of thoughts, in a very ~mixed mood, while listening to Ludovico Einaudi. Feel free to send me any comments
+through my email (batuhan [at] python [dot] org) or twitter (@isidentical).</p>
+
+
+             
+ 
+                <p id="post-share-links">
+    Share on:
+      <a href="https://twitter.com/intent/tweet?text=Should%20we%20say%20stop%20to%20the%20syntactical%20growth%20of%20Python%3F&url=https%3A//tree.science/syntatical-growth-of-python.html&hashtags=python" target="_blank" rel="nofollow noopener noreferrer" title="Share on Twitter">Twitter</a>
+ ❄       <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//tree.science/syntatical-growth-of-python.html" target="_blank" rel="nofollow noopener noreferrer" title="Share on Facebook">Facebook</a>
+ ❄       <a href="mailto:?subject=Should%20we%20say%20stop%20to%20the%20syntactical%20growth%20of%20Python%3F&amp;body=https%3A//tree.science/syntatical-growth-of-python.html" target="_blank" rel="nofollow noopener noreferrer" title="Share via Email">Email</a>
+
+            
+            
+
+
+
+
+
+
+
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="https://tree.science/the-art-of-ast-unparsing.html" title="Previous: The art of AST unparsing">The art of AST unparsing</a></li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section id="article-sidebar" class="span2">
+            <h4>Published</h4>
+            <time itemprop="dateCreated" datetime="2020-12-27T02:20:00+03:00">Paz 27 Aralık 2020</time>
+            <h4>Category</h4>
+            <a class="category-link" href="https://tree.science/categories.html#languages-ref">Languages</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="https://tree.science/tags.html#python-ref">python
+                    <span class="superscript">2</span>
+</a></li>
+            </ul>
+<h4>Contact</h4>
+<div id="sidebar-social-link">
+    <a href="https://twitter.com/isidentical" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="Twitter" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#1da1f3"/><path fill="#fff" d="M437 152a72 72 0 0 1-40 12 72 72 0 0 0 32-40 72 72 0 0 1-45 17 72 72 0 0 0-122 65 200 200 0 0 1-145-74 72 72 0 0 0 22 94 72 72 0 0 1-32-7 72 72 0 0 0 56 69 72 72 0 0 1-32 1 72 72 0 0 0 67 50 200 200 0 0 1-105 29 200 200 0 0 0 309-179 200 200 0 0 0 35-37"/></svg>
+    </a>
+    <a href="https://github.com/isidentical" title="" target="_blank" rel="nofollow noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="GitHub" role="img" viewBox="0 0 512 512"><rect width="512" height="512" rx="15%" fill="#1B1817"/><path fill="#fff" d="M335 499c14 0 12 17 12 17H165s-2-17 12-17c13 0 16-6 16-12l-1-50c-71 16-86-28-86-28-12-30-28-37-28-37-24-16 1-16 1-16 26 2 40 26 40 26 22 39 59 28 74 22 2-17 9-28 16-35-57-6-116-28-116-126 0-28 10-51 26-69-3-6-11-32 3-67 0 0 21-7 70 26 42-12 86-12 128 0 49-33 70-26 70-26 14 35 6 61 3 67 16 18 26 41 26 69 0 98-60 120-117 126 10 8 18 24 18 48l-1 70c0 6 3 12 16 12z"/></svg>
+    </a>
+</div>
+            
+
+
+
+
+
+            
+
+
+
+
+
+        </section>
+</div>
+</article>
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    <!-- Background of PhotoSwipe.
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+
+        <!-- Container that holds slides.
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                <!--  Controls are self-explanatory. Order can be changed. -->
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                <!-- Preloader demo https://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>                    </div>
+                    <div class="span1"></div>
+                </div>
+            </div>
+        </div>
+<footer>
+    <div>
+        Content licensed under <a rel="license nofollow noopener noreferrer"
+    href="http://creativecommons.org/licenses/by/4.0/" target="_blank">
+    Creative Commons Attribution 4.0 International License</a>.
+    </div>
+
+
+
+
+    <div id="fpowered">
+        Powered by: <a href="http://getpelican.com/" title="Pelican Home Page" target="_blank" rel="nofollow noopener noreferrer">Python/Pelican</a>
+    </div>
+</footer>            <script src="//code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script src="https://tree.science/theme/js/elegant.prod.9e9d5ce754.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+    <script>
+    (function () {
+        if (window.location.hash.match(/^#comment-\d+$/)) {
+            $('#comment_thread').collapse('show');
+        }
+    })();
+    window.onhashchange=function(){
+        if (window.location.hash.match(/^#comment-\d+$/))
+            window.location.reload(true);
+    }
+    $('#comment_thread').on('shown', function () {
+        var link = document.getElementById('comment-accordion-toggle');
+        var old_innerHTML = link.innerHTML;
+        $(link).fadeOut(200, function() {
+            $(this).text('Click here to hide comments').fadeIn(200);
+        });
+        $('#comment_thread').on('hidden', function () {
+            $(link).fadeOut(200, function() {
+                $(this).text(old_innerHTML).fadeIn(200);
+            });
+        })
+    })
+</script>
+
+    </body>
+    <!-- Theme: Elegant built for Pelican
+        License : MIT -->
+</html>

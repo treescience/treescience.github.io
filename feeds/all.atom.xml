@@ -1,5 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Tree Science</title><link href="https://tree.science/" rel="alternate"></link><link href="https://tree.science/feeds/all.atom.xml" rel="self"></link><id>https://tree.science/</id><updated>2020-11-06T19:00:00+03:00</updated><entry><title>The art of AST unparsing</title><link href="https://tree.science/the-art-of-ast-unparsing.html" rel="alternate"></link><published>2020-11-06T19:00:00+03:00</published><updated>2020-11-06T19:00:00+03:00</updated><author><name>isidentical</name></author><id>tag:tree.science,2020-11-06:/the-art-of-ast-unparsing.html</id><summary type="html">&lt;p&gt;Sorcery behind renconstruction of source code from syntax trees.&lt;/p&gt;</summary><content type="html"></content><category term="Abstract Syntax Trees"></category><category term="ast"></category><category term="unparsing"></category></entry><entry><title>What the Backtracking???</title><link href="https://tree.science/what-the-backtracking.html" rel="alternate"></link><published>2020-08-02T20:10:00+03:00</published><updated>2020-08-02T20:10:00+03:00</updated><author><name>isidentical</name></author><id>tag:tree.science,2020-08-02:/what-the-backtracking.html</id><summary type="html">&lt;p&gt;Implementing a simple variant of Backtracking with various workarounds&lt;/p&gt;</summary><content type="html">&lt;p&gt;Who loves restrictions? Even they might provide some kind of speed-ups or
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Tree Science</title><link href="https://tree.science/" rel="alternate"></link><link href="https://tree.science/feeds/all.atom.xml" rel="self"></link><id>https://tree.science/</id><updated>2020-12-27T02:20:00+03:00</updated><entry><title>Should we say stop to the syntactical growth of Python?</title><link href="https://tree.science/syntatical-growth-of-python.html" rel="alternate"></link><published>2020-12-27T02:20:00+03:00</published><updated>2020-12-27T02:20:00+03:00</updated><author><name>isidentical</name></author><id>tag:tree.science,2020-12-27:/syntatical-growth-of-python.html</id><summary type="html">&lt;p&gt;Let's talk about the syntax-wise growth of Python.&lt;/p&gt;</summary><content type="html">&lt;p&gt;The language has been literally 'evolving' since the version
+that many of us have begun (maybe since the initial day, if you
+are Guido). I'm not talking about any features in specific,
+but rather the whole language. If you compare a code fragment
+that you wrote 5 years ago, with the 'refactored' version that
+you would write if it were today the difference is obvious. &lt;/p&gt;
+&lt;p&gt;We've seen a lot of new syntax popping into our lives, in the
+just last 5 years (starting from 3.5) ::&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.python.org/dev/peps/pep-0448/"&gt;PEP 448&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;
+&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nb"&gt;range&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;4&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;x&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;y&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;}}&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;x&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;y&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.python.org/dev/peps/pep-0465/"&gt;PEP 465&lt;/a&gt;, a.k.a matrix operator&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;S&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;H&lt;/span&gt; &lt;span class="o"&gt;@&lt;/span&gt; &lt;span class="n"&gt;beta&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;T&lt;/span&gt; &lt;span class="o"&gt;@&lt;/span&gt; &lt;span class="n"&gt;inv&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;H&lt;/span&gt; &lt;span class="o"&gt;@&lt;/span&gt; &lt;span class="n"&gt;V&lt;/span&gt; &lt;span class="o"&gt;@&lt;/span&gt; &lt;span class="n"&gt;H&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;T&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;@&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;H&lt;/span&gt; &lt;span class="o"&gt;@&lt;/span&gt; &lt;span class="n"&gt;beta&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;r&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.python.org/dev/peps/pep-0492/"&gt;PEP 492&lt;/a&gt;, a.k.a native async syntax&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;async&lt;/span&gt; &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;commit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;session&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;span class="o"&gt;...&lt;/span&gt;
+
+&lt;span class="k"&gt;async&lt;/span&gt; &lt;span class="k"&gt;with&lt;/span&gt; &lt;span class="n"&gt;session&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;transaction&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="o"&gt;...&lt;/span&gt;
+    &lt;span class="k"&gt;await&lt;/span&gt; &lt;span class="n"&gt;session&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;update&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="o"&gt;...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.python.org/dev/peps/pep-0498/"&gt;PEP 498&lt;/a&gt;, a.k.a f-strings&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="sa"&gt;f&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;The value is &lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s1"&gt;.&amp;#39;&lt;/span&gt;
+&lt;span class="s1"&gt;&amp;#39;The value is 80.&amp;#39;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.python.org/dev/peps/pep-0526/"&gt;PEP 526&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;primes&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;List&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[]&lt;/span&gt;
+
+&lt;span class="n"&gt;captain&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="nb"&gt;str&lt;/span&gt;  &lt;span class="c1"&gt;# Note: no initial value!&lt;/span&gt;
+
+&lt;span class="k"&gt;class&lt;/span&gt; &lt;span class="nc"&gt;Starship&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;stats&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;ClassVar&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;Dict&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nb"&gt;str&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.python.org/dev/peps/pep-0570/"&gt;PEP 570&lt;/a&gt;, a.k.a walrus&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;def add(x, y, /):&lt;/span&gt;
+&lt;span class="err"&gt;    return x + y&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="https://www.python.org/dev/peps/pep-0572/"&gt;PEP 572&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c1"&gt;# Handle a matched regex&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;match&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="n"&gt;pattern&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="c1"&gt;# Do something with match&lt;/span&gt;
+
+&lt;span class="c1"&gt;# A loop that can&amp;#39;t be trivially rewritten using 2-arg iter()&lt;/span&gt;
+&lt;span class="k"&gt;while&lt;/span&gt; &lt;span class="n"&gt;chunk&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="n"&gt;file&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;read&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;8192&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+&lt;span class="n"&gt;process&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;chunk&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="c1"&gt;# Reuse a value that&amp;#39;s expensive to compute&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;x&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt;&lt;span class="o"&gt;**&lt;/span&gt;&lt;span class="mi"&gt;3&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This huge list contains some of the (major~) changes that have been implemented since 3.5, there
+are also quite a few minor ones (like &lt;code&gt;_&lt;/code&gt; separator for numbers, &lt;code&gt;1_000_00&lt;/code&gt; or &lt;a href="https://www.python.org/dev/peps/pep-0530/"&gt;PEP 530&lt;/a&gt;
+for async comprehensions or even a new one for 3.9 to extend the decorator syntax, &lt;a href="https://www.python.org/dev/peps/pep-0614/"&gt;PEP 614&lt;/a&gt;.)&lt;/p&gt;
+&lt;p&gt;Well, since we all refreshed our memories, let's try to imagine a world where these features don't exist. Imagine
+not having access to f-strings, writing weird stuff to deal with your coroutines, or repeating yourself 2 times whenever
+you want to read chunks from a file, writing utility functions to merge 2 mappings and more awful cases. Except for maybe
+PEP 465 (I never needed it, probably because I don't do scientific programming. But from what I saw by looking at the examples
+in the PEP, it is quite good for people who work with data on a daily basis.) every feature in that list literally changed and
+actively affected how I write my Python code, right now.&lt;/p&gt;
+&lt;p&gt;Seems like syntactical additions sounds great, why don't we add everything to the language? Let's start with
+adding regex literals, and then move forward to call pipeline operator, blah blah blah. If you are subscribed
+to the Python-ideas, then get ready to see tons of different, redundant new syntax proposals (even I, probably
+proposed a couple of very obscure and stupid ideas in the past). Though this brings me back to the point of,
+whether we should stop the syntactical growth at all or not. &lt;/p&gt;
+&lt;p&gt;In the last 6 month, there were 3 different major syntax changes were proposed. I guess everyone is somewhat familiar
+with the pattern matching PEPs, PEP 622 (PEP 634, PEP 635, PEP 636). Also, there is PEP 637 for allowing keyword arguments
+on the subscript syntax &lt;code&gt;[x=y, z=q]&lt;/code&gt; and PEP 638, for syntactic macros. I am not going to criticize any of these PEPs, but
+I'd like to ask you to think about them. Think of how they could affect you in 5 years. Think about whether your
+coding styles would change because of them, think about how good fit they are to the language, and most importantly think about
+whether you 'ACTUALLY' need them. Is there any 'ESSENTIAL' case that would be much better when you pass keyword arguments through
+slices instead of just making a call to some sort of &lt;code&gt;get()&lt;/code&gt; function? Or can't we have syntactical customization without having an
+official definition of it? Does the syntax for 'patterns' (described by PEP 634) is a good fit for the Python language?&lt;/p&gt;
+&lt;p&gt;There are a lot of blog posts, &lt;a href="https://discuss.python.org/t/gauging-sentiment-on-pattern-matching/5770"&gt;poll&lt;/a&gt;s and maybe
+hundreds of emails out there related to these proposals. I won't expect anyone to read them all, but if you want to get a 
+general idea just check some of them out.&lt;/p&gt;
+&lt;p&gt;Have to say that, I'm extremely overwhelmed by seeing this amount of change proposals every day, in various
+places. No one is forcing me to read them, though it is just a burden that I am intentionally or unintentionally taking to see what are people looking for in the language that I (myself) probably will be stuck
+with for the next decade. What are they trying to achieve by making it grow so more (syntax-wise) with so little real gain besides being just another obstacle on the way. If we put a new syntax, then even though how small it is, we can not remove it (all of us saw what happened during
+2 to 3 transformation). Putting a new syntax is much more serious and complicated than putting a new functionality to the
+runtime. What I'm trying to ask is, simply ask yourself whether you actually need this or not. Whether this would
+'save' you (just like the &lt;code&gt;f-strings&lt;/code&gt;, or the PEP 572) or not. &lt;/p&gt;
+&lt;p&gt;I just threw a bunch of thoughts, in a very ~mixed mood, while listening to Ludovico Einaudi. Feel free to send me any comments
+through my email (batuhan [at] python [dot] org) or twitter (@isidentical).&lt;/p&gt;</content><category term="Languages"></category><category term="python"></category></entry><entry><title>The art of AST unparsing</title><link href="https://tree.science/the-art-of-ast-unparsing.html" rel="alternate"></link><published>2020-11-06T19:00:00+03:00</published><updated>2020-11-06T19:00:00+03:00</updated><author><name>isidentical</name></author><id>tag:tree.science,2020-11-06:/the-art-of-ast-unparsing.html</id><summary type="html">&lt;p&gt;Sorcery behind renconstruction of source code from syntax trees.&lt;/p&gt;</summary><content type="html"></content><category term="Abstract Syntax Trees"></category><category term="ast"></category><category term="unparsing"></category></entry><entry><title>What the Backtracking???</title><link href="https://tree.science/what-the-backtracking.html" rel="alternate"></link><published>2020-08-02T20:10:00+03:00</published><updated>2020-08-02T20:10:00+03:00</updated><author><name>isidentical</name></author><id>tag:tree.science,2020-08-02:/what-the-backtracking.html</id><summary type="html">&lt;p&gt;Implementing a simple variant of Backtracking with various workarounds&lt;/p&gt;</summary><content type="html">&lt;p&gt;Who loves restrictions? Even they might provide some kind of speed-ups or
 ensures the simplicity of algorithms. I guess the answer will be, most of the
 'reasonable' people. But I can't say that I am one of them when I want to
 get some fun so I'll go forward and try to bring backtracking to a 3rd party
