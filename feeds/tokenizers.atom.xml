@@ -15,7 +15,6 @@ to some pre-defined categories.&lt;/p&gt;
 1,9-1,10:           OP             &amp;#39;)&amp;#39;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;p&gt;The example above shows tokens that belong to a single-word
 (no space between any character group) source code. The lexer
 has certain rules that explain what a token looks like. It
@@ -57,7 +56,6 @@ when there is a problem that happens before.&lt;/p&gt;
       &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="n"&gt;LexerError&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;f&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Unknown token: &amp;#39;&lt;/span&gt;&lt;span class="si"&gt;{&lt;/span&gt;&lt;span class="n"&gt;word&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;#39;&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;p&gt;We will go through the words (space splitted) and then if we encounter
 a digit or an operator, we return its type. If not, we will raise
 a &lt;code&gt;LexerError&lt;/code&gt;.&lt;/p&gt;
@@ -85,7 +83,6 @@ Lexing new word: $
 __main__.LexerError: Unknown token: $
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;p&gt;Let's draft about the verifier, which will use this producer;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;verifier&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;producer&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
   &lt;span class="n"&gt;expected_type&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;Tokens&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;DIGIT&lt;/span&gt;
@@ -102,7 +99,6 @@ __main__.LexerError: Unknown token: $
   &lt;span class="k"&gt;else&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
     &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="kc"&gt;True&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
 
 &lt;p&gt;Since we have only one way to go, we can use a single state-d system.
 We have 'expected_type' which points to the next thing that we need to
@@ -124,7 +120,6 @@ Lexing new word: +
 __main__.ParserError: Expecting Tokens.DIGIT but got Tokens.OPERATOR
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;p&gt;As you can see, it worked as we imagined. It didn't try to lex '$' sign
 because the parser failed before asking it to eat that character. It didn't
 even try to lex '3' so it early-failed and saved up some time. And if we
@@ -138,7 +133,6 @@ Lexing new word: 3
 Lexing new word: $
 __main__.LexerError: Unknown token: $
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
 
 &lt;p&gt;We get the lexer error. This was it. Thanks for reading, I know this was a
 relatively short blog post but I needed to explain why token producers are

@@ -117,7 +117,6 @@ identifier tokens as different states on the transition table when it is reserve
         <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">type</span>
 </code></pre></div>
 
-
 <p>But you might ask that there is still only one transition that is returned from that function even
 the input was a keyword, and that means there are no alternatives. You are right. With this
 kind of implementation, you can not use reserved strings (a.k.a keywords) on other occassions even
@@ -144,7 +143,6 @@ a 2-element tuple depending on the code-path.</p>
         <span class="k">return</span> <span class="n">token</span><span class="o">.</span><span class="n">type</span><span class="p">,</span>
 </code></pre></div>
 
-
 <p>So, if you make 'import' a soft keyword, then when the parser is in a state that expects either
 a 'NAME' or an 'import' keyword, it will try both and see which one of the path will be successfully
 continues.</p>
@@ -169,7 +167,6 @@ can and as soon as we are clear, we'll go back to the old way and output one by 
              self._add_token(token)
 </code></pre></div>
 
-
 <p>Let's try to draft a <code>_TokenGeneratorProxy</code> class;</p>
 <div class="highlight"><pre><span></span><code> <span class="k">class</span> <span class="nc">_TokenGeneratorProxy</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">generator</span><span class="p">):</span>
@@ -184,7 +181,6 @@ can and as soon as we are clear, we'll go back to the old way and output one by 
         <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">token</span>
 </code></pre></div>
-
 
 <p>We just implemented an iterator protocol with <code>__iter__</code> (which returns the iterator)
 and the <code>__next__</code> (the function that is called on every iteration). For now, we're just
@@ -206,7 +202,6 @@ is something like this;</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">eat_and_print_next_token</span><span class="p">()</span>
 </code></pre></div>
 
-
 <p>Which in theory should work like this;</p>
 <div class="highlight"><pre><span></span><code>eating &#39;NAME&#39; as the position &#39;0&#39;
 
@@ -225,7 +220,6 @@ using cached token &#39;OPERATOR&#39; from the position &#39;1&#39;
 using cached token &#39;NAME&#39; from the position &#39;2&#39;
 eating &#39;NEWLINE&#39; as the position &#39;3&#39;
 </code></pre></div>
-
 
 <p>It might look a little bit complex, but if I have to explain I would say
 that, without any 'release' operation, the proxy is going to just consume
@@ -252,7 +246,6 @@ will come up from the cache.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">_release_ranges</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">+</span> <span class="n">total_eaten</span>
 </code></pre></div>
 
-
 <p>The <code>_release_ranges</code> is a list of 3-item length records. The first one points
 the state that we started eating tokens, the second one points the end (which
 is set after the re-locking operation), and the third one is another list that
@@ -267,7 +260,6 @@ consists from the tokens that are eaten on that range.</p>
             <span class="n">eaten_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">token</span>
 </code></pre></div>
-
 
 <p>The <code>eaten_tokens</code> (the last element of the record) is going to be ordered list
 so the index will point to the actual token that lays in <code>self._counter + point</code>.
@@ -287,7 +279,6 @@ It will also work if you try to jump.</p>
     <span class="k">return</span> <span class="n">token</span>
 </code></pre></div>
 
-
 <p>And finally, we need an extra for loop to go through all release records
 and try to match the current point and if found, just use it. If not, we'll
 allocate a new token.</p>
@@ -301,7 +292,6 @@ allocate a new token.</p>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
 </code></pre></div>
-
 
 <p>Since we already caching the results of <code>eat</code>, it is going to be much
 easier to implement a <code>can_advance</code> functionality which will just try
@@ -329,7 +319,6 @@ of the mechanism;</p>
     stack[-1].dfa = plan.next_dfa
 </code></pre></div>
 
-
 <p>As you might be seen, it basically converts the input to a transition
 then finds the next state by checking out the transition table of the
 last state. When it founds the next transition, it sets it and continues.</p>
@@ -339,7 +328,6 @@ need to change there to. </p>
 <div class="highlight"><pre><span></span><code><span class="gd">-        transition = _token_to_transition(grammar, type_, value)</span>
 <span class="gi">+        possible_transitions = _token_to_transition(grammar, type_, value)</span>
 </code></pre></div>
-
 
 <p>Also, it is going be too much for us to fit the functionality of finding the
 next state into a <code>try/except</code>, so we're just going to split out too.</p>
@@ -352,7 +340,6 @@ next state into a <code>try/except</code>, so we're just going to split out too.
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
         <span class="o">...</span> <span class="c1"># pop / error_recovery</span>
 </code></pre></div>
-
 
 <p>The <code>get_possible_plan</code> is going to return <code>None</code>, only if there is nowhere to proceed
 with the given transition. For just preserving the old habit of raising <code>KeyError</code>, we're
@@ -368,7 +355,6 @@ have some kind of backtracking.</p>
             <span class="n">possible_plans</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">possible_plan</span><span class="p">)</span>
 </code></pre></div>
 
-
 <p>The function will get the <code>possible_transitions</code>, and a <code>transition_table</code> to check
 them against. It will create a temporary list that is going to contain all possible
 routes with given states. Then we'll go through all the states and try to find a place
@@ -379,7 +365,6 @@ for them in the transition table.</p>
     <span class="k">return</span> <span class="n">possible_plans</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </code></pre></div>
 
-
 <p>If there is nothing inside of <code>possible_plans</code>, we're just going to return <code>None</code> (which
 as I mentioned before, is going to equal of "we are done here"). If there is only one possible
 route, it is so nice, we can just return it and exit without any trouble. But, what if there
@@ -388,7 +373,6 @@ in.</p>
 <div class="highlight"><pre><span></span><code><span class="n">dead_plans</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 <span class="n">possible_plan_table</span> <span class="o">=</span> <span class="p">{</span><span class="n">possible_plan</span><span class="p">:</span> <span class="p">[</span><span class="n">possible_plan</span><span class="p">]</span> <span class="k">for</span> <span class="n">possible_plan</span> <span class="ow">in</span> <span class="n">possible_plans</span><span class="p">}</span>
 </code></pre></div>
-
 
 <p>We are going to keep 2 different tables. One is going to be a set of <code>dead_plans</code>, and the other one is going
 to be a mapping of the possible routes and how far they can proceed. Like if we have 2 possible routes and one
@@ -402,7 +386,6 @@ can eat 3 token more and then fail, and if the other one can eat 4 and fail, we'
         <span class="n">token</span> <span class="o">=</span> <span class="n">token_proxy</span><span class="o">.</span><span class="n">eat</span><span class="p">(</span><span class="n">counter</span><span class="p">)</span>
         <span class="n">next_transitions</span> <span class="o">=</span> <span class="n">_token_to_transition</span><span class="p">(</span><span class="n">grammar</span><span class="p">,</span> <span class="o">*</span><span class="n">token</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
 </code></pre></div>
-
 
 <p>So we are always going to check out if there are any superior plans with <code>self._superior_plan</code>, and if we found
 that all plans except one is dead, we're just going to choose the one and stop consuming the token proxy and
@@ -423,7 +406,6 @@ I don't expect will happen ever).</p>
     <span class="n">possible_plans</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_possible_plan</span><span class="p">)</span>
 </code></pre></div>
 
-
 <p>Here it comes the real backtracking. We are moving on all possible plans, and finding the current state
 which holds the transition table (<code>current_plan</code>). After that, we check if this plan is a dead-end or no.
 If it is, we are just going to pass the backtracking step and continue on the next plan.</p>
@@ -439,7 +421,6 @@ things like these;</p>
 ]
 </code></pre></div>
 
-
 <p>The reason we iterate a reversed version of it is finding a place where we can proceed. When we got a push
 that actually produces results with our current strategy, we choose to go with it and exit from the loop.
 If we can't find anything that actually works, we are just going to add this plan's root to the <code>dead_plans</code>
@@ -448,7 +429,6 @@ set and won't ever try to progress on it.</p>
 some kind of invalid input) we're just going to exit with the supeior plan;</p>
 <div class="highlight"><pre><span></span><code><span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_superior_plan</span><span class="p">(</span><span class="n">possible_plan_table</span><span class="p">,</span> <span class="n">winner</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
-
 
 <p>This was it, I really enjoyed when I was developing this since it sounded like a really funny thing to experiment with in the
 beginning. By the way if you have similar thoughts or new ideas about this subject, just let me know at <a href="https://twitter.com/isidentical">twitter/@isidentical</a>,
@@ -477,6 +457,7 @@ I really would like to hear from you.</p>
             <nav>
             <ul class="articles-timeline">
                 <li class="previous-article">« <a href="https://tree.science/lazy-lexers.html" title="Previous: Lazy Lexers">Lazy Lexers</a></li>
+                <li class="next-article"><a href="https://tree.science/the-art-of-ast-unparsing.html" title="Next: The art of AST unparsing">The art of AST unparsing</a> »</li>
             </ul>
             </nav>
             </aside>

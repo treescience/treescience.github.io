@@ -101,7 +101,6 @@ to some pre-defined categories.</p>
 1,9-1,10:           OP             &#39;)&#39;
 </code></pre></div>
 
-
 <p>The example above shows tokens that belong to a single-word
 (no space between any character group) source code. The lexer
 has certain rules that explain what a token looks like. It
@@ -143,7 +142,6 @@ when there is a problem that happens before.</p>
       <span class="k">raise</span> <span class="n">LexerError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown token: &#39;</span><span class="si">{</span><span class="n">word</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-
 <p>We will go through the words (space splitted) and then if we encounter
 a digit or an operator, we return its type. If not, we will raise
 a <code>LexerError</code>.</p>
@@ -171,7 +169,6 @@ Lexing new word: $
 __main__.LexerError: Unknown token: $
 </code></pre></div>
 
-
 <p>Let's draft about the verifier, which will use this producer;</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">verifier</span><span class="p">(</span><span class="n">producer</span><span class="p">):</span>
   <span class="n">expected_type</span> <span class="o">=</span> <span class="n">Tokens</span><span class="o">.</span><span class="n">DIGIT</span>
@@ -188,7 +185,6 @@ __main__.LexerError: Unknown token: $
   <span class="k">else</span><span class="p">:</span>
     <span class="k">return</span> <span class="kc">True</span>
 </code></pre></div>
-
 
 <p>Since we have only one way to go, we can use a single state-d system.
 We have 'expected_type' which points to the next thing that we need to
@@ -210,7 +206,6 @@ Lexing new word: +
 __main__.ParserError: Expecting Tokens.DIGIT but got Tokens.OPERATOR
 </code></pre></div>
 
-
 <p>As you can see, it worked as we imagined. It didn't try to lex '$' sign
 because the parser failed before asking it to eat that character. It didn't
 even try to lex '3' so it early-failed and saved up some time. And if we
@@ -224,7 +219,6 @@ Lexing new word: 3
 Lexing new word: $
 __main__.LexerError: Unknown token: $
 </code></pre></div>
-
 
 <p>We get the lexer error. This was it. Thanks for reading, I know this was a
 relatively short blog post but I needed to explain why token producers are

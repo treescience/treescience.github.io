@@ -107,7 +107,6 @@ example might prove the otherwise. Let's imagine a simple AST of a python functi
 <div class="highlight"><pre><span></span><code>function = Function(identifier name, expr? returns, stmt* body)
 </code></pre></div>
 
-
 <p>It has a name, an optional return annotation, and a list of statements as it's body.
 Which looks very accurate, right?</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">foo</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -118,13 +117,11 @@ Which looks very accurate, right?</p>
     <span class="k">pass</span>
 </code></pre></div>
 
-
 <p>If we try to address these functions in the AST which we created earlier, it will
 look something like this;</p>
 <div class="highlight"><pre><span></span><code><span class="n">Function</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="n">Expr</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="p">[</span><span class="n">PassStmt</span><span class="p">()])</span>
 <span class="n">Function</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">PassStmt</span><span class="p">(),</span> <span class="n">PassStmt</span><span class="p">()])</span>
 </code></pre></div>
-
 
 <p>And there is nothing that looks wrong with this form, as long as it is generated
 by some kind of parser. But Python allows users to craft and compile arbitrary ASTs.
@@ -143,7 +140,6 @@ just for ensuring that user crafted AST's won't crash the compiler.</p>
 <span class="ne">ValueError</span><span class="p">:</span> <span class="n">empty</span> <span class="n">body</span> <span class="n">on</span> <span class="n">FunctionDef</span> <span class="o">&lt;=</span> <span class="n">custom</span> <span class="n">error</span>
 </code></pre></div>
 
-
 <div class="highlight"><pre><span></span><code><span class="k">static</span> <span class="kt">int</span>
 <span class="nf">validate_nonempty_seq</span><span class="p">(</span><span class="n">asdl_seq</span> <span class="o">*</span><span class="n">seq</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">what</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">owner</span><span class="p">)</span>
 <span class="p">{</span>
@@ -161,7 +157,6 @@ just for ensuring that user crafted AST's won't crash the compiler.</p>
     <span class="k">case</span> <span class="nl">FunctionDef_kind</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">validate_body</span><span class="p">(</span><span class="n">stmt</span><span class="o">-&gt;</span><span class="n">v</span><span class="p">.</span><span class="n">FunctionDef</span><span class="p">.</span><span class="n">body</span><span class="p">,</span> <span class="s">&quot;FunctionDef&quot;</span><span class="p">)</span>
 </code></pre></div>
-
 
 <p>Also this is not the only case where the AST doesn't comply with ASDL. For an example,
 the AST of an dictionary defined as <code>Dict(expr* keys, expr* values)</code>, which means that
@@ -183,7 +178,6 @@ Dict(
 )
 </code></pre></div>
 
-
 <p>Did you see that there is an outlier among the <code>keys</code>, the <code>None</code>. This is because that field
 qualifiers are mutually exclusive, and you can't chain them. Things like this would make the
 ASDL a context-dependent thing and in some cases, they might increase the maintenance burden
@@ -199,7 +193,6 @@ FunctionDef(identifier name, expr? returns, stmt+ body)
 Dict([expr]* keys, expr* values)
 </code></pre></div>
 
-
 <p>the second one is kind-a different might be hard to process in big ASDL's but more explicit.</p>
 <div class="highlight"><pre><span></span><code>ZeroOrMore[&lt;field type&gt;] =&gt; such as *
 OneOrMore[&lt;field type&gt;] =&gt; such as +
@@ -208,7 +201,6 @@ Opt/Optional[&lt;field type&gt;] =&gt; such as * or [&lt;field type&gt;]
 FunctionDef(identifier name, Opt[returns], OneOrMore[body])
 Dict(ZeroOrMore[Opt[keys]], ZerOrMore[values])
 </code></pre></div>
-
 
 <h1>ASDL actions</h1>
 <p>Integrating some source code inside of grammars isn't a new idea, a recent example would be the
@@ -227,13 +219,11 @@ module &lt;name&gt; {}
 module Example {}
 </code></pre></div>
 
-
 <p>The action syntax will depend on the action's purpose</p>
 <div class="highlight"><pre><span></span><code>{verify, transition} $left::right [where $condition] {
     [ACTION]
 }
 </code></pre></div>
-
 
 <h2>Verifier Actions</h2>
 <p>As I mentioned earlier, languages that allow users to create external ASTs requires a custom
@@ -261,7 +251,6 @@ verify Try::(handlers, finalbody, orelse) where len(handlers) == 0 {
 }
 </code></pre></div>
 
-
 <h2>Transitioning</h2>
 <p>Here it comes the other big problem and a use case for actions, the AST changes. If you are writing some kind of tool that consumes the AST (e.g: linter), it is not uncommon for you to get broken
 in every release. The reason for that is  AST is also an internal format and things might just change
@@ -280,7 +269,6 @@ module Example {
 }
 </code></pre></div>
 
-
 <div class="highlight"><pre><span></span><code>@version 3.7
 module Example {
     number = Num(object value)
@@ -288,12 +276,10 @@ module Example {
            | Complex(object value)
 </code></pre></div>
 
-
 <div class="highlight"><pre><span></span><code>@version 3.8
 module Example {
     number = Number(object value, str kind)
 </code></pre></div>
-
 
 <p>The <code>3.6</code> version has 2 nodes, <code>NumOrFloat</code> for numbers and floats and <code>Complex</code> for imaginary numbers.
 The <code>3.7</code> form splits <code>NumOrFloat</code> into 2 different nodes, a <code>Num</code> node and a <code>Float</code> node. And finally,
@@ -316,7 +302,6 @@ transition Number::(Num, Float, Complex) {
 }
 </code></pre></div>
 
-
 <p>The example upper takes a <code>3.8</code> <code>Number</code> node and outputs a <code>3.7</code> node (<code>Num</code>, <code>Float</code>, or <code>Complex</code>). This is
 also going to be the case for <code>3.7</code>, it will take a <code>3.7</code> AST and output a <code>3.6</code> version. So in the end, all ASTs
 will be the same in the imaginary "compatibility" layer.</p>
@@ -331,7 +316,6 @@ module Example {
     }
 }
 </code></pre></div>
-
 
 <h1>Thanks</h1>
 <p>I guess this is all, thanks for reading this and if you have any extra thoughts about this, I really want to listen to
@@ -375,7 +359,7 @@ all of them. Please contact me through <code>isidentical [at] tree.science</code
                     <span class="superscript">1</span>
 </a></li>
                 <li><a href="https://tree.science/tags.html#ast-ref">ast
-                    <span class="superscript">2</span>
+                    <span class="superscript">3</span>
 </a></li>
                 <li><a href="https://tree.science/tags.html#zephyrs-asdl-ref">zephyr's asdl
                     <span class="superscript">1</span>

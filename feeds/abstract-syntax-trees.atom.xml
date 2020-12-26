@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Tree Science - Abstract Syntax Trees</title><link href="https://tree.science/" rel="alternate"></link><link href="https://tree.science/feeds/abstract-syntax-trees.atom.xml" rel="self"></link><id>https://tree.science/</id><updated>2020-07-06T23:53:00+03:00</updated><entry><title>Using Ancestral Chain in AST</title><link href="https://tree.science/using-ancestral-chains-in-ast.html" rel="alternate"></link><published>2020-07-06T23:53:00+03:00</published><updated>2020-07-06T23:53:00+03:00</updated><author><name>isidentical</name></author><id>tag:tree.science,2020-07-06:/using-ancestral-chains-in-ast.html</id><summary type="html">&lt;p&gt;Use cases for such chains, and a possible 30 LoC python implementation.&lt;/p&gt;</summary><content type="html">&lt;p&gt;Tree-like data is a common consumption target of applications that are empowered
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Tree Science - Abstract Syntax Trees</title><link href="https://tree.science/" rel="alternate"></link><link href="https://tree.science/feeds/abstract-syntax-trees.atom.xml" rel="self"></link><id>https://tree.science/</id><updated>2020-11-06T19:00:00+03:00</updated><entry><title>The art of AST unparsing</title><link href="https://tree.science/the-art-of-ast-unparsing.html" rel="alternate"></link><published>2020-11-06T19:00:00+03:00</published><updated>2020-11-06T19:00:00+03:00</updated><author><name>isidentical</name></author><id>tag:tree.science,2020-11-06:/the-art-of-ast-unparsing.html</id><summary type="html">&lt;p&gt;Sorcery behind renconstruction of source code from syntax trees.&lt;/p&gt;</summary><content type="html"></content><category term="Abstract Syntax Trees"></category><category term="ast"></category><category term="unparsing"></category></entry><entry><title>Using Ancestral Chain in AST</title><link href="https://tree.science/using-ancestral-chains-in-ast.html" rel="alternate"></link><published>2020-07-06T23:53:00+03:00</published><updated>2020-07-06T23:53:00+03:00</updated><author><name>isidentical</name></author><id>tag:tree.science,2020-07-06:/using-ancestral-chains-in-ast.html</id><summary type="html">&lt;p&gt;Use cases for such chains, and a possible 30 LoC python implementation.&lt;/p&gt;</summary><content type="html">&lt;p&gt;Tree-like data is a common consumption target of applications that are empowered
 by visitor pattern. A couple of use cases of this pattern includes code generators
 (a.k.a compilers), static code analysis tools (linters), and code formatters. Code
 generators take advantage of working with heterogeneous data. On the other side,
@@ -22,7 +22,6 @@ about that codebase.&lt;/p&gt;
     &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;visit_Constant&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
         &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;module&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;emit&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Instruction&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;LITERAL&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
 
 &lt;p&gt;As seen in the upper example, implementing a simple AST to some imaginary
 bytecode compiler isn't hard at all. It only requires a visitor class and
@@ -56,7 +55,6 @@ will do the job of finding the right place to emit code for that node.&lt;/p&gt;
 &lt;span class="p"&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;p&gt;In the example above, the &lt;code&gt;visit_binop&lt;/code&gt; function doesn't need to know what is
 the type of lhs / rhs. It just knows it is an expression and passes it to a top-level 
 &lt;code&gt;visit_expression&lt;/code&gt; function which then handles the rest. Okay, we are good up to know, 
@@ -86,7 +84,6 @@ or not. For this example, I'll forbid using control flow elements inside of a &l
         &lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;p&gt;What we are looking for a &lt;code&gt;Continue&lt;/code&gt; (or &lt;code&gt;Break()&lt;/code&gt; etc.) inside of a finally inside of a
 for loop. Let's try to draft an implemention of it.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;ast&lt;/span&gt;
@@ -99,7 +96,6 @@ for loop. Let's try to draft an implemention of it.&lt;/p&gt;
         &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;emit_body&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;node&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;bind&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="n"&gt;jumper&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
         &lt;span class="bp"&gt;self&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;inside_for&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="bp"&gt;False&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
 
 &lt;p&gt;Okay, from the initial point, we got ourselves a "state" (&lt;code&gt;self.inside_for&lt;/code&gt;), it is no big
 deal. The only downside we can think of, for now, is the code looks kinda messy. We can probably
@@ -116,7 +112,6 @@ write a context manager to set an instance variable, but I don't think that woul
             &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="ne"&gt;ValueError&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;p&gt;It started to have more states (&lt;code&gt;self.inside_finally&lt;/code&gt;), more and more. Guess we can have a context manager 
 to at least reduce this hand managing burden, but it won't solve the problem of thousands of different
 states that you may require or not. While the codebase grows, some of them will become obsolete, useless; 
@@ -129,7 +124,6 @@ below.&lt;/p&gt;
         &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;y&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;z&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
             &lt;span class="k"&gt;continue&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
 
 &lt;p&gt;This should successfully run because the &lt;code&gt;continue&lt;/code&gt; belongs a different &lt;code&gt;for&lt;/code&gt; loop, and that has nothing
 to do with the upper &lt;code&gt;try/finally&lt;/code&gt; clause. We can probably solve this with more and more states but I won't
@@ -146,7 +140,6 @@ backtracking to the original tree node from the child.&lt;/p&gt;
 &amp;lt;ast.Expression object at 0x7f39270f9730&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;p&gt;Having such a chain attached to node objects would allow us to search in that context and check if we have
 the right conditions to raise an error. &lt;/p&gt;
 &lt;h3&gt;Implementation&lt;/h3&gt;
@@ -156,19 +149,16 @@ that would take the tree, and &lt;code&gt;parent&lt;/code&gt; field to all nodes
     &lt;span class="n"&gt;tree&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;parent&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="kc"&gt;None&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;p&gt;The first thing is setting the parent of root node. It is important because it will signal consumers to
 where they should stop.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;    &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;parent&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;ast&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;walk&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tree&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
 
 &lt;p&gt;&lt;code&gt;ast.walk&lt;/code&gt; will walk in every node and leaf, which they all be parents (leaves might not, but that won't matter
 since the function below doesn't return anything on that case)&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;        &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;child&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;ast&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;iter_child_nodes&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;parent&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
             &lt;span class="n"&gt;child&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;parent&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;parent&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
 
 &lt;p&gt;&lt;code&gt;iter_child_nodes&lt;/code&gt; will yield all the &lt;em&gt;first-level&lt;/em&gt; child nodes that belong to the given node. And then we can safely
 set the parent. It might be a cool idea to use &lt;code&gt;weakref.ref&lt;/code&gt; here, but I don't think the parents will go away
@@ -180,14 +170,12 @@ while the children are still living. &lt;/p&gt;
         &lt;span class="k"&gt;yield&lt;/span&gt; &lt;span class="n"&gt;parent&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;p&gt;This way we can do some kind of search among the parents&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;tuple&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;get_parents&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;lhs&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
 &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;ast&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;BinOp&lt;/span&gt; &lt;span class="nb"&gt;object&lt;/span&gt; &lt;span class="n"&gt;at&lt;/span&gt; &lt;span class="mh"&gt;0x7f46b7e3d190&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;ast&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Expression&lt;/span&gt; &lt;span class="nb"&gt;object&lt;/span&gt; &lt;span class="n"&gt;at&lt;/span&gt; &lt;span class="mh"&gt;0x7f46b7ed6c80&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="o"&gt;&amp;gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;ast&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;Expression&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="nb"&gt;tuple&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;map&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;type&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;get_parents&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;lhs&lt;/span&gt;&lt;span class="p"&gt;)))&lt;/span&gt;
 &lt;span class="kc"&gt;True&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
 
 &lt;p&gt;This was it, all we need is that searching for parents. If we want to repeat the &lt;code&gt;Compiler&lt;/code&gt; example with the same
 the bug we had, it would be as simple and as pythonic as this;&lt;/p&gt;
@@ -207,7 +195,6 @@ the bug we had, it would be as simple and as pythonic as this;&lt;/p&gt;
         &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;node&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;FORIBDDEN_SET&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
             &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="ne"&gt;ValueError&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
 
 &lt;p&gt;It is this simple, no states at all. Although we made the code simple, we want to also solve the bug. One thing
 that came to my mind for such cases is a utility function that returns the first occurrence of a type in that
@@ -231,7 +218,6 @@ for.&lt;/p&gt;
                 &lt;span class="k"&gt;raise&lt;/span&gt; &lt;span class="ne"&gt;ValueError&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;p&gt;What it does is that it finds the first try/finally and the first for clause and then
 it checks that if that &lt;code&gt;continue&lt;/code&gt;'s bound for is also the parent of that &lt;code&gt;try/finally&lt;/code&gt;
 clause, if so, it raises the value error, but cases like this;&lt;/p&gt;
@@ -242,7 +228,6 @@ clause, if so, it raises the value error, but cases like this;&lt;/p&gt;
         &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;child&lt;/span&gt; &lt;span class="ow"&gt;in&lt;/span&gt; &lt;span class="n"&gt;children&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
             &lt;span class="k"&gt;continue&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
 
 &lt;p&gt;it will be silenced. &lt;/p&gt;
 &lt;p&gt;So, instead of having millions of states, we solved the problem with 3 lines of extra code to the compiler.
@@ -306,7 +291,6 @@ example might prove the otherwise. Let's imagine a simple AST of a python functi
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;function = Function(identifier name, expr? returns, stmt* body)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;p&gt;It has a name, an optional return annotation, and a list of statements as it's body.
 Which looks very accurate, right?&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;foo&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
@@ -317,13 +301,11 @@ Which looks very accurate, right?&lt;/p&gt;
     &lt;span class="k"&gt;pass&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;p&gt;If we try to address these functions in the AST which we created earlier, it will
 look something like this;&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="n"&gt;Function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;foo&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Expr&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nb"&gt;int&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;PassStmt&lt;/span&gt;&lt;span class="p"&gt;()])&lt;/span&gt;
 &lt;span class="n"&gt;Function&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;bar&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;PassStmt&lt;/span&gt;&lt;span class="p"&gt;(),&lt;/span&gt; &lt;span class="n"&gt;PassStmt&lt;/span&gt;&lt;span class="p"&gt;()])&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
 
 &lt;p&gt;And there is nothing that looks wrong with this form, as long as it is generated
 by some kind of parser. But Python allows users to craft and compile arbitrary ASTs.
@@ -342,7 +324,6 @@ just for ensuring that user crafted AST's won't crash the compiler.&lt;/p&gt;
 &lt;span class="ne"&gt;ValueError&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;empty&lt;/span&gt; &lt;span class="n"&gt;body&lt;/span&gt; &lt;span class="n"&gt;on&lt;/span&gt; &lt;span class="n"&gt;FunctionDef&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;=&lt;/span&gt; &lt;span class="n"&gt;custom&lt;/span&gt; &lt;span class="n"&gt;error&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="k"&gt;static&lt;/span&gt; &lt;span class="kt"&gt;int&lt;/span&gt;
 &lt;span class="nf"&gt;validate_nonempty_seq&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;asdl_seq&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;seq&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;what&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="k"&gt;const&lt;/span&gt; &lt;span class="kt"&gt;char&lt;/span&gt; &lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;owner&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;span class="p"&gt;{&lt;/span&gt;
@@ -360,7 +341,6 @@ just for ensuring that user crafted AST's won't crash the compiler.&lt;/p&gt;
     &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="nl"&gt;FunctionDef_kind&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
         &lt;span class="k"&gt;return&lt;/span&gt; &lt;span class="n"&gt;validate_body&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;stmt&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;v&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;FunctionDef&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;body&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s"&gt;&amp;quot;FunctionDef&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
 
 &lt;p&gt;Also this is not the only case where the AST doesn't comply with ASDL. For an example,
 the AST of an dictionary defined as &lt;code&gt;Dict(expr* keys, expr* values)&lt;/code&gt;, which means that
@@ -382,7 +362,6 @@ Dict(
 )
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;p&gt;Did you see that there is an outlier among the &lt;code&gt;keys&lt;/code&gt;, the &lt;code&gt;None&lt;/code&gt;. This is because that field
 qualifiers are mutually exclusive, and you can't chain them. Things like this would make the
 ASDL a context-dependent thing and in some cases, they might increase the maintenance burden
@@ -398,7 +377,6 @@ FunctionDef(identifier name, expr? returns, stmt+ body)
 Dict([expr]* keys, expr* values)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;p&gt;the second one is kind-a different might be hard to process in big ASDL's but more explicit.&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;ZeroOrMore[&amp;lt;field type&amp;gt;] =&amp;gt; such as *
 OneOrMore[&amp;lt;field type&amp;gt;] =&amp;gt; such as +
@@ -407,7 +385,6 @@ Opt/Optional[&amp;lt;field type&amp;gt;] =&amp;gt; such as * or [&amp;lt;field t
 FunctionDef(identifier name, Opt[returns], OneOrMore[body])
 Dict(ZeroOrMore[Opt[keys]], ZerOrMore[values])
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
 
 &lt;h1&gt;ASDL actions&lt;/h1&gt;
 &lt;p&gt;Integrating some source code inside of grammars isn't a new idea, a recent example would be the
@@ -426,13 +403,11 @@ module &amp;lt;name&amp;gt; {}
 module Example {}
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;p&gt;The action syntax will depend on the action's purpose&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;{verify, transition} $left::right [where $condition] {
     [ACTION]
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
 
 &lt;h2&gt;Verifier Actions&lt;/h2&gt;
 &lt;p&gt;As I mentioned earlier, languages that allow users to create external ASTs requires a custom
@@ -460,7 +435,6 @@ verify Try::(handlers, finalbody, orelse) where len(handlers) == 0 {
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;h2&gt;Transitioning&lt;/h2&gt;
 &lt;p&gt;Here it comes the other big problem and a use case for actions, the AST changes. If you are writing some kind of tool that consumes the AST (e.g: linter), it is not uncommon for you to get broken
 in every release. The reason for that is  AST is also an internal format and things might just change
@@ -479,7 +453,6 @@ module Example {
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;@version 3.7
 module Example {
     number = Num(object value)
@@ -487,12 +460,10 @@ module Example {
            | Complex(object value)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;@version 3.8
 module Example {
     number = Number(object value, str kind)
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
 
 &lt;p&gt;The &lt;code&gt;3.6&lt;/code&gt; version has 2 nodes, &lt;code&gt;NumOrFloat&lt;/code&gt; for numbers and floats and &lt;code&gt;Complex&lt;/code&gt; for imaginary numbers.
 The &lt;code&gt;3.7&lt;/code&gt; form splits &lt;code&gt;NumOrFloat&lt;/code&gt; into 2 different nodes, a &lt;code&gt;Num&lt;/code&gt; node and a &lt;code&gt;Float&lt;/code&gt; node. And finally,
@@ -515,7 +486,6 @@ transition Number::(Num, Float, Complex) {
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
-
 &lt;p&gt;The example upper takes a &lt;code&gt;3.8&lt;/code&gt; &lt;code&gt;Number&lt;/code&gt; node and outputs a &lt;code&gt;3.7&lt;/code&gt; node (&lt;code&gt;Num&lt;/code&gt;, &lt;code&gt;Float&lt;/code&gt;, or &lt;code&gt;Complex&lt;/code&gt;). This is
 also going to be the case for &lt;code&gt;3.7&lt;/code&gt;, it will take a &lt;code&gt;3.7&lt;/code&gt; AST and output a &lt;code&gt;3.6&lt;/code&gt; version. So in the end, all ASTs
 will be the same in the imaginary "compatibility" layer.&lt;/p&gt;
@@ -530,7 +500,6 @@ module Example {
     }
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
 
 &lt;h1&gt;Thanks&lt;/h1&gt;
 &lt;p&gt;I guess this is all, thanks for reading this and if you have any extra thoughts about this, I really want to listen to

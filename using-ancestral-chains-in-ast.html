@@ -109,7 +109,6 @@ about that codebase.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">Instruction</span><span class="p">(</span><span class="s2">&quot;LITERAL&quot;</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
 </code></pre></div>
 
-
 <p>As seen in the upper example, implementing a simple AST to some imaginary
 bytecode compiler isn't hard at all. It only requires a visitor class and
 implementation of how an individual node should act when seen. This kind of
@@ -142,7 +141,6 @@ will do the job of finding the right place to emit code for that node.</p>
 <span class="p">}</span>
 </code></pre></div>
 
-
 <p>In the example above, the <code>visit_binop</code> function doesn't need to know what is
 the type of lhs / rhs. It just knows it is an expression and passes it to a top-level 
 <code>visit_expression</code> function which then handles the rest. Okay, we are good up to know, 
@@ -172,7 +170,6 @@ or not. For this example, I'll forbid using control flow elements inside of a <c
         <span class="p">)</span>
 </code></pre></div>
 
-
 <p>What we are looking for a <code>Continue</code> (or <code>Break()</code> etc.) inside of a finally inside of a
 for loop. Let's try to draft an implemention of it.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">ast</span>
@@ -185,7 +182,6 @@ for loop. Let's try to draft an implemention of it.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">emit_body</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">bind</span><span class="o">=</span><span class="n">jumper</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inside_for</span> <span class="o">=</span> <span class="bp">False</span>
 </code></pre></div>
-
 
 <p>Okay, from the initial point, we got ourselves a "state" (<code>self.inside_for</code>), it is no big
 deal. The only downside we can think of, for now, is the code looks kinda messy. We can probably
@@ -202,7 +198,6 @@ write a context manager to set an instance variable, but I don't think that woul
             <span class="k">raise</span> <span class="ne">ValueError</span>
 </code></pre></div>
 
-
 <p>It started to have more states (<code>self.inside_finally</code>), more and more. Guess we can have a context manager 
 to at least reduce this hand managing burden, but it won't solve the problem of thousands of different
 states that you may require or not. While the codebase grows, some of them will become obsolete, useless; 
@@ -215,7 +210,6 @@ below.</p>
         <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">z</span><span class="p">:</span>
             <span class="k">continue</span>
 </code></pre></div>
-
 
 <p>This should successfully run because the <code>continue</code> belongs a different <code>for</code> loop, and that has nothing
 to do with the upper <code>try/finally</code> clause. We can probably solve this with more and more states but I won't
@@ -232,7 +226,6 @@ backtracking to the original tree node from the child.</p>
 &lt;ast.Expression object at 0x7f39270f9730&gt;
 </code></pre></div>
 
-
 <p>Having such a chain attached to node objects would allow us to search in that context and check if we have
 the right conditions to raise an error. </p>
 <h3>Implementation</h3>
@@ -242,19 +235,16 @@ that would take the tree, and <code>parent</code> field to all nodes by traversi
     <span class="n">tree</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div>
 
-
 <p>The first thing is setting the parent of root node. It is important because it will signal consumers to
 where they should stop.</p>
 <div class="highlight"><pre><span></span><code>    <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
 </code></pre></div>
-
 
 <p><code>ast.walk</code> will walk in every node and leaf, which they all be parents (leaves might not, but that won't matter
 since the function below doesn't return anything on that case)</p>
 <div class="highlight"><pre><span></span><code>        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">iter_child_nodes</span><span class="p">(</span><span class="n">parent</span><span class="p">):</span>
             <span class="n">child</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
 </code></pre></div>
-
 
 <p><code>iter_child_nodes</code> will yield all the <em>first-level</em> child nodes that belong to the given node. And then we can safely
 set the parent. It might be a cool idea to use <code>weakref.ref</code> here, but I don't think the parents will go away
@@ -266,14 +256,12 @@ while the children are still living. </p>
         <span class="k">yield</span> <span class="n">parent</span>
 </code></pre></div>
 
-
 <p>This way we can do some kind of search among the parents</p>
 <div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">get_parents</span><span class="p">(</span><span class="n">lhs</span><span class="p">))</span>
 <span class="p">(</span><span class="o">&lt;</span><span class="n">ast</span><span class="o">.</span><span class="n">BinOp</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7f46b7e3d190</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">ast</span><span class="o">.</span><span class="n">Expression</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7f46b7ed6c80</span><span class="o">&gt;</span><span class="p">)</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">ast</span><span class="o">.</span><span class="n">Expression</span> <span class="ow">in</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">get_parents</span><span class="p">(</span><span class="n">lhs</span><span class="p">)))</span>
 <span class="kc">True</span>
 </code></pre></div>
-
 
 <p>This was it, all we need is that searching for parents. If we want to repeat the <code>Compiler</code> example with the same
 the bug we had, it would be as simple and as pythonic as this;</p>
@@ -293,7 +281,6 @@ the bug we had, it would be as simple and as pythonic as this;</p>
         <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">FORIBDDEN_SET</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span>
 </code></pre></div>
-
 
 <p>It is this simple, no states at all. Although we made the code simple, we want to also solve the bug. One thing
 that came to my mind for such cases is a utility function that returns the first occurrence of a type in that
@@ -317,7 +304,6 @@ for.</p>
                 <span class="k">raise</span> <span class="ne">ValueError</span>
 </code></pre></div>
 
-
 <p>What it does is that it finds the first try/finally and the first for clause and then
 it checks that if that <code>continue</code>'s bound for is also the parent of that <code>try/finally</code>
 clause, if so, it raises the value error, but cases like this;</p>
@@ -328,7 +314,6 @@ clause, if so, it raises the value error, but cases like this;</p>
         <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
             <span class="k">continue</span>
 </code></pre></div>
-
 
 <p>it will be silenced. </p>
 <p>So, instead of having millions of states, we solved the problem with 3 lines of extra code to the compiler.
@@ -411,7 +396,7 @@ out the social section in the footer, or mail me directly from <code>isidentical
                     <span class="superscript">1</span>
 </a></li>
                 <li><a href="https://tree.science/tags.html#ast-ref">ast
-                    <span class="superscript">2</span>
+                    <span class="superscript">3</span>
 </a></li>
                 <li><a href="https://tree.science/tags.html#python-ref">python
                     <span class="superscript">1</span>
