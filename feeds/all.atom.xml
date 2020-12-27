@@ -57,14 +57,14 @@ last 5 years (starting from 3.5):&lt;/p&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href="https://www.python.org/dev/peps/pep-0570/"&gt;PEP 570&lt;/a&gt;, a.k.a walrus&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.python.org/dev/peps/pep-0570/"&gt;PEP 570&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;def add(x, y, /):&lt;/span&gt;
 &lt;span class="err"&gt;    return x + y&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href="https://www.python.org/dev/peps/pep-0572/"&gt;PEP 572&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href="https://www.python.org/dev/peps/pep-0572/"&gt;PEP 572&lt;/a&gt;, a.k.a walrus&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c1"&gt;# Handle a matched regex&lt;/span&gt;
 &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;match&lt;/span&gt; &lt;span class="o"&gt;:=&lt;/span&gt; &lt;span class="n"&gt;pattern&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;search&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt; &lt;span class="ow"&gt;is&lt;/span&gt; &lt;span class="ow"&gt;not&lt;/span&gt; &lt;span class="kc"&gt;None&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
@@ -113,7 +113,7 @@ when the syntax was changed in a backwards-incompatible manner, and no one wants
 is why I am just asking you to think about whether do you believe these would be good fits for the language, whether
 they will worth to their imponderable cost. &lt;/p&gt;
 &lt;p&gt;This is just me, throwing a bunch of questions into the void. If you want to talk more about these, feel free to
-send me an email (batuhan [at] python [dot] org) or reach me through twitter (open DM for all, @isidentical).&lt;/p&gt;</content><category term="Languages"></category><category term="python"></category></entry><entry><title>The art of AST unparsing</title><link href="https://tree.science/the-art-of-ast-unparsing.html" rel="alternate"></link><published>2020-11-06T19:00:00+03:00</published><updated>2020-11-06T19:00:00+03:00</updated><author><name>isidentical</name></author><id>tag:tree.science,2020-11-06:/the-art-of-ast-unparsing.html</id><summary type="html">&lt;p&gt;Sorcery behind renconstruction of source code from syntax trees.&lt;/p&gt;</summary><content type="html"></content><category term="Abstract Syntax Trees"></category><category term="ast"></category><category term="unparsing"></category></entry><entry><title>What the Backtracking???</title><link href="https://tree.science/what-the-backtracking.html" rel="alternate"></link><published>2020-08-02T20:10:00+03:00</published><updated>2020-08-02T20:10:00+03:00</updated><author><name>isidentical</name></author><id>tag:tree.science,2020-08-02:/what-the-backtracking.html</id><summary type="html">&lt;p&gt;Implementing a simple variant of Backtracking with various workarounds&lt;/p&gt;</summary><content type="html">&lt;p&gt;Who loves restrictions? Even they might provide some kind of speed-ups or
+send me an email (batuhan [at] python [dot] org) or reach me through twitter (open DM for all, @isidentical).&lt;/p&gt;</content><category term="Languages"></category><category term="python"></category></entry><entry><title>What the Backtracking???</title><link href="https://tree.science/what-the-backtracking.html" rel="alternate"></link><published>2020-08-02T20:10:00+03:00</published><updated>2020-08-02T20:10:00+03:00</updated><author><name>isidentical</name></author><id>tag:tree.science,2020-08-02:/what-the-backtracking.html</id><summary type="html">&lt;p&gt;Implementing a simple variant of Backtracking with various workarounds&lt;/p&gt;</summary><content type="html">&lt;p&gt;Who loves restrictions? Even they might provide some kind of speed-ups or
 ensures the simplicity of algorithms. I guess the answer will be, most of the
 'reasonable' people. But I can't say that I am one of them when I want to
 get some fun so I'll go forward and try to bring backtracking to a 3rd party
